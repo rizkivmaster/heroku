@@ -1,12 +1,6 @@
 from flask import Flask, jsonify,request
-from bs4 import BeautifulSoup
-import urllib2
 
 
-def scrap(url):
-        html = urllib2.urlopen(url).read()
-        scrapper = BeautifulSoup(html,"html.parser")
-        return scrapper
 
 def parseDate(date):
 	if(date>=10):
@@ -27,7 +21,6 @@ def index():
 def jsontest():
 	return jsonify(username='Rizki',password='test')
 
-	
 
 if(__name__=="__main__"):
 	app.run()
