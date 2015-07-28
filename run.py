@@ -27,8 +27,8 @@ def index():
 def jsontest():
 	return jsonify(username='Rizki',password='test')
 
-@app.route('/magrib/<int:day>')
-def magrib(day):
+@app.route('/shalat/<int:day>')
+def shalat(day):
 	halaman = scrap("http://jadwalsholat.pkpu.or.id/")
 	tabel = halaman.find('table',{'class':'table_adzan'})
 	records = tabel.findAll('tr')
