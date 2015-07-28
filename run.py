@@ -1,4 +1,4 @@
-from flask import Flask, jsonify,request
+from flask import Flask, jsonify,request,render_template
 from bs4 import BeautifulSoup
 import urllib2
 
@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-	return "Hello"
+	return render_template('index.html');
 
 @app.route('/json')
 def jsontest():
