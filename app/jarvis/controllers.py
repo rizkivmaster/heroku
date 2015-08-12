@@ -5,10 +5,9 @@ from sqlalchemy import create_engine,ForeignKey
 from sqlalchemy import Column, Integer,String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref,sessionmaker
-from flask import Blueprint,jsonify
 import json
 
-engine = create_engine('postgresql://postgres:postgres@localhost:5432/jarvis',echo=True)
+engine = create_engine('postgresql://postgres:12345@localhost:5432/jarvis',echo=True)
 Base = declarative_base()
 
 class Document(Base):
@@ -28,14 +27,10 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
+def addObject(object):
+    session.add(Document(json.dumps(object.__dict__)))
+
 def listDocument():
     res = session.query(Document).all()
-    return [x.__dict__['json'] for x in res]
+    return [x.json for x in res]
 
-jarvis = Blueprint('jarvis',__name__)
-
-
-@jarvis.route('/')
-def update():
-    results = listDocument()
-    return '['+','.join(results)+']'
