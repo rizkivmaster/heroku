@@ -1,12 +1,17 @@
 __author__ = 'traveloka'
 
-from controllers import listDocument,addObject
-from flask import Blueprint,jsonify
+from controllers import listDocument
+from flask import Blueprint,jsonify,render_template
 
 jarvis = Blueprint('jarvis',__name__)
 
 
-@jarvis.route('/')
+@jarvis.route('/update')
 def update():
     results = listDocument()
-    return '['+','.join(results)+']'
+    ret = dict(data=results)
+    return jsonify(ret)
+
+@jarvis.route('/open')
+def open():
+    return render_template('jarvis.html')

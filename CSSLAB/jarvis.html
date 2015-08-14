@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css"
+	href="static/css/bootstrap.css">
+	<script src="static/js/jquery-1.11.3.js"></script>
+	<script src="static/js/bootstrap.js"></script>
+
+	<script type="text/javascript">
+
+
+
+        $(document).ready(function(){
+            function success(text){
+	            $('#captor').html(text);
+	        }
+
+            var index=0;
+            setInterval( function(){
+                                        $.ajax({
+                                            url: "http://www.pureexample.com/backend/data/car-sale.json",success: function() {
+                                                alert("done");
+                                            }, async: false});
+                                }
+                ,5000);
+
+        });
+	</script>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="captor">
+
+</div>
+</body>
+</html>
