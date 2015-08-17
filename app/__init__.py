@@ -7,6 +7,6 @@ from app.journalia import joernalia
 app = Flask(__name__)
 
 app.register_blueprint(main,url_prefix='/')
-app.register_blueprint(shalat,url_prefix='/shalat')
-app.register_blueprint(jarvis,url_prefix='/jarvis')
-app.register_blueprint(joernalia,url_prefix='/joernalia')
+# app.register_blueprint(shalat,url_prefix='/shalat')
+# app.register_blueprint(jarvis,url_prefix='/jarvis')
+# app.register_blueprint(joernalia,url_prefix='/joernalia')
