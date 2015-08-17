@@ -3,8 +3,10 @@ __author__ = 'rizkivmaster'
 from controllers import Record, recordAccessor
 from flask import Blueprint, render_template, request,jsonify
 import datetime,random
+import os
 
 
+home_url = os.environ['HOME_URL']
 joernalia = Blueprint('journalia',__name__)
 
 @joernalia.route('/page/<string:type>')
@@ -13,14 +15,14 @@ def page(type):
     entries = recordAccessor.getAllRecords(postType)
     debitSum = sum([entry.amount for entry in entries if entry.accountingType == 'DEBIT'])
     creditSum = sum([entry.amount for entry in entries if entry.accountingType == 'KREDIT'])
-    return render_template('joernalia.html', postType=postType, entries=entries, debitSum=debitSum, creditSum=creditSum)
+    return render_template('joernalia.html', postType=postType, entries=entries, debitSum=debitSum, creditSum=creditSum, home_url=home_url)
 
 @joernalia.route('/bukubesar')
 def bigbook():
     entries = recordAccessor.getAllRecords()
     debitSum = sum([entry.amount for entry in entries if entry.accountingType == 'DEBIT'])
     creditSum = sum([entry.amount for entry in entries if entry.accountingType == 'KREDIT'])
-    return render_template('bukubesar.html', entries=entries, debitSum=debitSum, creditSum=creditSum)
+    return render_template('bukubesar.html', entries=entries, debitSum=debitSum, creditSum=creditSum, home_url=home_url)
 
 def randomId():
     return random.randint(0,10000)
