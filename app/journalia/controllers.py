@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-database_url = os.environ["DATABASE_URL"]
+database_url = os.environ['DATABASE_URL']
 print('DATABASE URL: ' +database_url)
 engine = create_engine(database_url,echo=True)
 
