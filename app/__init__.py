@@ -1,8 +1,8 @@
 from flask import Flask
-from app.shalat.controllers import shalat
+# from app.shalat.controllers import shalat
 from app.main.controllers import main
-from app.jarvis import jarvis
-from app.journalia import joernalia
+# from app.jarvis import jarvis
+# from app.journalia import joernalia
 
 app = Flask(__name__)
 
