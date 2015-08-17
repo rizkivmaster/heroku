@@ -1,0 +1,177 @@
+	<!DOCTYPE html>
+	<html lang="en">
+	<link rel="stylesheet" type="text/css" 
+	href="static/css/bootstrap.css">
+	<script src="static/js/jquery-1.11.3.js"></script>
+	<script src="static/js/bootstrap.js"></script>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+
+	<script type="text/javascript">
+
+	var rowParser = function(value){
+		var text = 
+		"<td>"+value['date']+"</td>"+ 
+		"<td>"+value['description']+"</td>"+ 
+		"<td>"+value['amount']+"</td>";
+		if(value['cashType']=="Debit"){
+			text = text+"<td></td><td></td><td></td>";
+		}
+		else
+		{
+			text =  "<td></td><td></td><td></td>" +text;
+		}
+		return "<tr>"+text+"</tr>";
+	};
+
+	$(document).ready(function(){
+		var postType = 'KASIR';
+		var cashType = 'DEBIT';
+
+		$("#btnSubmit").click(function(){
+			var accountingPost = '';
+
+			if(postType=='KASIR'){
+				accountingPost = 'CASHIER';
+			}
+			else if(postType == 'PENJUALAN'){
+				accountingPost = 'SALES';
+			}
+			else if(postType == 'BELANJA'){
+				accountingPost = 'SHOP';
+			};
+			var formData = {
+				data : {
+					accountingType : cashType,
+					time : Date.getTime(),
+					notes : ('input[name=description]').val(),
+					amount :  parseInt($('input[name=amount]').val()),
+					accountingPost : accountingPost
+				},
+				postType : postType
+			};
+
+			$.ajax({
+				  type: "POST",
+				  url: 'http://localhost:5000/add',
+				  data: formData,
+				  success: function(){
+						window.location.href='http://localhost:5000/page/'+formData.postType
+				  }
+				});
+		});
+
+		$(".selectCashType").click(function(){
+			cashType = $(this).text();
+			$('#cashType').find('span:first').text(cashType);
+		});
+		$(".selectPostType").click(function(){
+			postType = $(this).text();
+			$('#postType').find('span:first').text(postType);
+			window.location.href='http://localhost:5000/page/'+postType;
+		});
+
+
+	});
+
+
+	</script>
+
+	<style type="text/css">
+	table, th,td{
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	th,td{
+		padding: 5px;
+		text-align: left;
+	}
+	thead td{
+		text-align: center;
+	}
+	.spacer{
+		margin: 10px;
+	}
+	</style>
+	<body>
+		<div class="container">
+			<div class="container-fluid spacer">
+				<form class="form-inline">
+					<div class="form-group">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="postType">
+								<span> 
+									KASIR
+								</span>
+								<span class="caret">
+								</span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:void(0)" class="selectPostType">KASIR</a></li>
+								<li><a href="javascript:void(0)" class="selectPostType">PENJUALAN</a></li>
+								<li><a href="javascript:void(0)" class="selectPostType">BELANJA</a></li>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="cashType">
+								<span> 
+									DEBIT
+								</span>
+								<span class="caret">
+								</span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:void(0)" class="selectCashType">DEBIT</a></li>
+								<li><a href="javascript:void(0)" class="selectCashType">KREDIT</a></li>
+							</ul>
+						</div>
+
+						<input type="text" class="form-control" placeholder="Description" name="description">
+						<div class="input-group">
+
+							<div class="input-group-addon">Rp.</div>
+							<input type="text" class="form-control" name="amount" placeholder="Amount">
+						</div>
+					</div>
+					<button id="btnSubmit" type="button" class="btn btn-primary">TAMBAHKAN</button>
+				</form>
+			</div>
+			<div class="panel panel-primary spacer">
+				<!-- kasih variable di sini -->
+				<div class="panel-heading">
+					POS PENJUALAN
+				</div>
+				<table class="table table-striped" id="mainTable">
+					<thead>
+						<tr>
+							<td>Tanggal</td>
+							<td>ID Transaksi</td>
+							<td>Kredit</td>
+							<td>Debit</td>
+							<td>Catatan</td>
+							<td>Jumlah</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>26/07/2015</td>
+							<td>Jual Sepatu</td>
+							<td>100.000</td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+
+
+		</div>
+
+		
+	</body>
+	</html>

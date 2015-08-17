@@ -8,7 +8,7 @@ from sqlalchemy.orm import relationship, backref,sessionmaker
 import json
 import logging
 
-engine = create_engine('postgresql://postgres:12345@localhost:5432/jarvis',echo=True)
+engine = create_engine('postgresql://postgres:postgres@localhost:5432/accounting',echo=True)
 
 Base = declarative_base()
 
