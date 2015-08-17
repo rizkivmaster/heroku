@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, jsonify
+import os
 
 main = Blueprint('main',__name__)
 
 @main.route('/')
 def index():
-	return render_template('index.html');
+	return os.environ["DATABASE_URL"]
 
 @main.route('json')
 def jsontest():
