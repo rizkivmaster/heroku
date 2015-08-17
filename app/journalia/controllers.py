@@ -2,8 +2,10 @@ __author__ = 'rizkivmaster'
 from sqlalchemy import String, Date, BigInteger, create_engine, ForeignKey, Column, desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-engine = create_engine('postgresql://postgres:postgres@localhost:5432/accounting',echo=True)
+database_url = os.environ["DATABASE_URL"]
+engine = create_engine(database_url,echo=True)
 
 Base = declarative_base()
 
@@ -47,8 +49,10 @@ class RecordAccessor:
     def updateRecord(self,record):
         recordSession.commit()
 
-    def getAllRecords(self,accountingPost):
-        allRecords = recordSession.query(Record).filter(Record.accountingPost==accountingPost).order_by(desc(Record.date)).all()
-        return allRecords
+    def getAllRecords(self,accountingPost=None):
+        if(accountingPost):
+            return recordSession.query(Record).filter(Record.accountingPost==accountingPost).order_by(desc(Record.date)).all()
+        else:
+            return  recordSession.query(Record).order_by(desc(Record.date)).all()
 
 recordAccessor = RecordAccessor()

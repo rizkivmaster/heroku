@@ -5,18 +5,27 @@ from flask import Blueprint, render_template, request,jsonify
 import datetime,random
 
 
-journalia = Blueprint('journalia',__name__)
+joernalia = Blueprint('journalia',__name__)
 
-@journalia.route('/page/<string:type>')
+@joernalia.route('/page/<string:type>')
 def page(type):
     postType = type
     entries = recordAccessor.getAllRecords(postType)
-    return render_template('joernalia.html',postType = postType,entries = entries)
+    debitSum = sum([entry.amount for entry in entries if entry.accountingType == 'DEBIT'])
+    creditSum = sum([entry.amount for entry in entries if entry.accountingType == 'KREDIT'])
+    return render_template('joernalia.html', postType=postType, entries=entries, debitSum=debitSum, creditSum=creditSum)
+
+@joernalia.route('/bukubesar')
+def bigbook():
+    entries = recordAccessor.getAllRecords()
+    debitSum = sum([entry.amount for entry in entries if entry.accountingType == 'DEBIT'])
+    creditSum = sum([entry.amount for entry in entries if entry.accountingType == 'KREDIT'])
+    return render_template('bukubesar.html', entries=entries, debitSum=debitSum, creditSum=creditSum)
 
 def randomId():
     return random.randint(0,10000)
 
-@journalia.route('/add',methods=['POST'])
+@joernalia.route('/add',methods=['POST'])
 def addRecord():
     json = request.get_json()
     data = json['data']

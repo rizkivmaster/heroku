@@ -33,6 +33,16 @@
 			else if(postType == 'BELANJA'){
 				accPost = 'BELANJA';
 			};
+			// alert('test');
+			try{
+				if(!parseInt($('input[name=amount]').val())) throw "Harus memasukkan angka!"
+			}
+			catch(err)
+			{
+				alert(err);
+				return;
+			};
+
 
 			var formData = {
 				data:
@@ -53,7 +63,6 @@
 				  dataType :'json',
 				  contentType: 'application/json;charset=UTF-8',
 				  success: function(item){
-						alert(item['postType']);
 						window.location.href='http://localhost:5000/joernalia/page/'+item['postType'];
 				  }
 				});
@@ -67,6 +76,10 @@
 			postType = $(this).text();
 			$('#postType').find('span:first').text(postType);
 			window.location.href='http://localhost:5000/joernalia/page/'+postType;
+		});
+
+		$("#btnBigBook").click(function(){
+			window.location.href='http://localhost:5000/joernalia/bukubesar';
 		});
 
 
@@ -154,17 +167,25 @@
 						<tr>
 							<td>{{ '{0}-{1}-{2}'.format(entry.date.day,entry.date.month, entry.date.year) }}</td>
 							<td>{{ entry.accountingId }}</td>
-							<td>{{ entry.amount }}</td>
-							<td></td>
+							<td>{% if(entry.accountingType=='KREDIT') %} {{ entry.amount }} {% endif %}</td>
+							<td>{% if(entry.accountingType=='DEBIT') %} {{ entry.amount }} {% endif %}</td>
 							<td>{{ entry.notes }} </td>
 							
 						</tr>
 						{% endfor %}
+						<tr>
+
+							<td><b>TOTAL</b></td>
+							<td></td>
+							<td><b>{{ creditSum }}</b></td>
+							<td><b>{{ debitSum }}</b></td>
+							<td></td>
+
+							
+						</tr>
 					</tbody>
 				</table>
 			</div>
-
-
-
+			<button id="btnBigBook" type="button" class="btn btn-primary spacer">LIHAT BUKU BESAR</button>
 		</div>
 {% endblock %}
