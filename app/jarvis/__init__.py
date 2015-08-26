@@ -12,6 +12,6 @@ def update():
     ret = dict(data=results)
     return jsonify(ret)
 
-@jarvis.route('/open')
+@jarvis.route('/')
 def open():
     return render_template('jarvis.html')

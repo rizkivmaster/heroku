@@ -1,0 +1,130 @@
+{% extends 'layout.html' %}
+{% block body %}
+<script>
+  $(function() {
+
+
+  	var fetchData = function(word){
+		alert(word);
+
+		 $.get("http://localhost:5000/meloentjoer/retrieve/"+word, function(data, status){
+		 	var arr = JSON.parse(data);
+        	alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+    		});
+  		// $.ajax({
+				//   type: "GET",
+				//   url: 'localhost:5000/meloentjoer/retrieve/'+word,
+				//   dataType :'json',
+				//   contentType: 'application/json;charset=UTF-8',
+				//   success: function(item){
+				// 		alert(JSON.stringify(item));
+				//   }
+				// });
+  	};
+
+	// $( "#tags" ).keypress(function(oEvent){
+	// 	// alert('ok');
+	// 	var word = $("#tags").val();
+	// 	alert(word);
+	// 	$.get("http://localhost:5000/meloentjoer/retrieve/"+word, function(data, status){
+	// 				 	var arr = JSON.parse(data);
+	// 		        	// alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+	// 		        	$( "#tags" ).autocomplete('option','source',arr);
+
+
+	// 	    		});
+	// });
+
+    $( "#asal" ).autocomplete({
+    //   	search: function(oEvent, oUi) {
+    //     // get current input value
+    //     	
+        
+
+	   //      $.get("http://localhost:5000/meloentjoer/retrieve/"+word, function(data, status){
+			 // 	var arr = JSON.parse(data);
+	   //      	// alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+	   //      	$( "#tags" ).autocomplete({source:arr});
+
+
+    // 		});
+    // 	}
+	    source: function( request, response ) {
+	    var word = $("#asal").val();
+        $.ajax({
+          url: "http://localhost:5000/meloentjoer/retrieve/"+word,
+          success: function( data ) {
+            response( JSON.parse(data) );
+          }
+        });
+      }
+
+    });
+
+    $( "#tujuan" ).autocomplete({
+    //   	search: function(oEvent, oUi) {
+    //     // get current input value
+    //     	
+        
+
+	   //      $.get("http://localhost:5000/meloentjoer/retrieve/"+word, function(data, status){
+			 // 	var arr = JSON.parse(data);
+	   //      	// alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+	   //      	$( "#tags" ).autocomplete({source:arr});
+
+
+    // 		});
+    // 	}
+	    source: function( request, response ) {
+	    var word = $("#tujuan").val();
+        $.ajax({
+          url: "http://localhost:5000/meloentjoer/retrieve/"+word,
+          success: function( data ) {
+            response( JSON.parse(data) );
+          }
+        });
+      }
+
+    });
+
+    $("#kirim").click(function(){
+    	var formData = {
+    		source:$("#asal").val(),
+    		destination:$("#tujuan").val()
+    	}
+    	$.ajax({
+				  type: "POST",
+				  url: "http://localhost:5000/meloentjoer/search",
+				  data: JSON.stringify(formData),
+				  dataType :'json',
+				  contentType: 'application/json;charset=UTF-8',
+				  success: function(item){
+				  	var result = '';
+				  	item['data'].forEach(function(x){
+				  		result+='</br>'
+				  		x.forEach(function(y){
+				  			result +=y+'</br>';	
+				  		});
+				  	});
+				  	$('#result').html(result);
+				  }
+				});
+    });
+
+   //  var tags = $("#tags").autocomplete({ 
+   //    change: function() {
+   //        alert('changed');
+   //    }
+   // });
+   // companyList.autocomplete('option','change').call(companyList);
+  });
+  </script>
+<div class="ui-widget">
+  <label for="asal">Asal: </label>
+  <input id="asal">
+  <label for="tujuan">Tujuan: </label>
+  <input id="tujuan">
+  <input id="kirim" type="submit" value="Kirim">
+  <div id="result"></div>
+</div>
+{% endblock %}
