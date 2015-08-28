@@ -10,7 +10,7 @@
   <script src="static/js/jquery-1.11.3.js"></script>
   <script src="static/js/jquery-ui.js"></script>
   <script src="static/js/bootstrap.js"></script>
-
+  
 <!--   <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -18,22 +18,85 @@
   <script>
   $(function() {
 
+    var availableTags= ['Test 1','Test Lorem Ipsum'];
     var auto = function(){
       return availableTags;
     }
-    $( "#tags" ).autocomplete({
+    $( "#asal" ).autocomplete({
+      source: auto()
+    });
+    $( "#tujuan" ).autocomplete({
       source: auto()
     });
   });
   </script>
+
 </head>
 <body>
- 
-<div class="ui-widget">
-  <label for="tags">Tags: </label>
-  <input id="tags">
-</div>
- 
- 
+  <style type="text/css">
+
+  .spacer{
+    margin: 10px;
+  }
+  </style>
+  <div class="container">
+    <div class="container-fluid spacer well">
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="ui-widget">
+            <label for="asal">Asal: </label>
+            <input id="asal">
+            <label for="tujuan">Tujuan: </label>
+            <input id="tujuan">
+            <input id="kirim" type="submit" value="Kirim">
+            <div id="result"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid spacer">
+      <ul class="list-group">
+        <li class="list-group-item active">
+    <span class="badge">14 menit</span><span class="badge">Rp. 20.000</span><h4 class="list-group-item-heading">via Tanah Abang</h4>
+    <p class="list-group-item-text">4 pemberhentian</p></li>
+         <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-scale"> </span> Stasiun Tanah Abang<span class="glyphicon glyphicon-menu-right"></span> Stasiun Sudirman <i>via Commuter Line Red Lines</i></li>
+
+        <li class="list-group-item"><span class=" glyphicon glyphicon-transfer"></span>
+    <span class="badge">14</span>Transfer ke <i>Commuter Line Brown Lines</i></li>
+       
+        <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-bed"></span> Halte Sudirman <span class="glyphicon glyphicon-menu-right"></span> Halte Slipi Kemanggisan via <i> Busway Transjakarta Corridor 1 </i></li>
+      </ul>
+      <ul class="list-group">
+        <li class="list-group-item active">
+    <span class="badge">14 menit</span><span class="badge">Rp. 20.000</span><h4 class="list-group-item-heading">via Tanah Abang</h4>
+    <p class="list-group-item-text">4 pemberhentian</p></li>
+         <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-scale"> </span> Stasiun Tanah Abang<span class="glyphicon glyphicon-menu-right"></span> Stasiun Sudirman <i>via Commuter Line Red Lines</i></li>
+
+        <li class="list-group-item"><span class=" glyphicon glyphicon-transfer"></span>
+    <span class="badge">14</span>Transfer ke <i>Commuter Line Brown Lines</i></li>
+       
+        <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-bed"></span> Halte Sudirman <span class="glyphicon glyphicon-menu-right"></span> Halte Slipi Kemanggisan via <i> Busway Transjakarta Corridor 1 </i></li>
+      </ul>
+      <ul class="list-group">
+        <li class="list-group-item active">
+    <span class="badge">14 menit</span><span class="badge">Rp. 20.000</span><h4 class="list-group-item-heading">via Tanah Abang</h4>
+    <p class="list-group-item-text">4 pemberhentian</p></li>
+         <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-scale"> </span> Stasiun Tanah Abang<span class="glyphicon glyphicon-menu-right"></span> Stasiun Sudirman <i>via Commuter Line Red Lines</i></li>
+
+        <li class="list-group-item"><span class=" glyphicon glyphicon-transfer"></span>
+    <span class="badge">14</span>Transfer ke <i>Commuter Line Brown Lines</i></li>
+       
+        <li class="list-group-item">
+    <span class="badge">14</span><span class="glyphicon glyphicon-bed"></span> Halte Sudirman <span class="glyphicon glyphicon-menu-right"></span> Halte Slipi Kemanggisan via <i> Busway Transjakarta Corridor 1 </i></li>
+      </ul>
+    </div>
+  </div>
+
+
 </body>
 </html>
