@@ -1,0 +1,36 @@
+
+{% for entry in entries %}
+<ul class="list-group">
+  <li class="list-group-item active">
+    <span class="badge">{{ entry.head[0] }} menit</span><span class="badge">Rp. {{entry.head[1] }}</span><h4 class="list-group-item-heading">Dari {{ entry.head[3] }} ke {{ entry.head[4] }} 
+    {% if entry.head[5]!=None %}
+     (via {{ entry.head[5] }})
+    {% endif %}
+    </h4>
+    <p class="list-group-item-text">{{ entry.head[2] }} pemberhentian</p></li>
+
+    {% for mode in entry.trail %}
+
+    {% if mode.trnsName=='Transfer' %}
+
+     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span>
+    Transfer ke <i>{{ mode.destination }}</i></li>
+
+    {% elif mode.trnsName=='Jalan Kaki' %}
+     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span> Dari {{ mode.origin }},
+     jalan kaki ke {{ mode.destination }}</li>
+
+    {% elif 'TransJakarta' in mode.trnsName %}
+    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+    <span class="glyphicon glyphicon-bed"></span> {{mode.origin}} <span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.trnsName}}</i></li>
+
+    {% elif 'KRL' in mode.trnsName %}
+
+    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+    <span class="glyphicon glyphicon-scale"> </span> {{mode.origin}}<span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.trnsName}}</i></li>
+    {% endif %}
+
+    {% endfor %}
+
+        </ul>
+              {% endfor %}

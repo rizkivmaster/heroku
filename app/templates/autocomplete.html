@@ -7,7 +7,7 @@
   	var fetchData = function(word){
 		alert(word);
 
-		 $.get("http://localhost:5000/meloentjoer/retrieve/"+word, function(data, status){
+		 $.get(host_url+word, function(data, status){
 		 	var arr = JSON.parse(data);
         	alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
     		});
@@ -52,7 +52,7 @@
 	    source: function( request, response ) {
 	    var word = $("#asal").val();
         $.ajax({
-          url: "http://localhost:5000/meloentjoer/retrieve/"+word,
+          url: host_url+'retrieve/'+word,
           success: function( data ) {
             response( JSON.parse(data) );
           }
@@ -78,7 +78,7 @@
 	    source: function( request, response ) {
 	    var word = $("#tujuan").val();
         $.ajax({
-          url: "http://localhost:5000/meloentjoer/retrieve/"+word,
+          url: host_url+"retrieve/"+word,
           success: function( data ) {
             response( JSON.parse(data) );
           }
@@ -94,19 +94,19 @@
     	}
     	$.ajax({
 				  type: "POST",
-				  url: "http://localhost:5000/meloentjoer/search",
+				  url: host_url+"search",
 				  data: JSON.stringify(formData),
 				  dataType :'json',
 				  contentType: 'application/json;charset=UTF-8',
 				  success: function(item){
-				  	var result = '';
-				  	item['data'].forEach(function(x){
-				  		result+='</br>'
-				  		x.forEach(function(y){
-				  			result +=y+'</br>';	
-				  		});
-				  	});
-				  	$('#result').html(result);
+				  	// var result = '';
+				  	// item['data'].forEach(function(x){
+				  	// 	result+='</br>'
+				  	// 	x.forEach(function(y){
+				  	// 		result +=y+'</br>';	
+				  	// 	});
+				  	// });
+				  	$('#result').html(item['data']);
 				  }
 				});
     });
@@ -119,12 +119,30 @@
    // companyList.autocomplete('option','change').call(companyList);
   });
   </script>
-<div class="ui-widget">
-  <label for="asal">Asal: </label>
-  <input id="asal">
-  <label for="tujuan">Tujuan: </label>
-  <input id="tujuan">
-  <input id="kirim" type="submit" value="Kirim">
-  <div id="result"></div>
-</div>
+  <!-- <div id="result"></div> -->
+
+<style type="text/css">
+
+  .spacer{
+    margin: 10px;
+  }
+  </style>
+  <div class="container">
+    <div class="container-fluid spacer well">
+        <div class="form-group">
+          <div class="ui-widget">
+            <label for="asal">Asal: </label>
+            <input id="asal">
+            <label for="tujuan">Tujuan: </label>
+            <input id="tujuan">
+            <input id="kirim" type="submit" value="Kirim">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="result" class="container-fluid spacer" >
+      
+    </div>
+  </div>
+
 {% endblock %}
