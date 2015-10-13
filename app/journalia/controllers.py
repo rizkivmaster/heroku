@@ -6,7 +6,7 @@ import os
 
 database_url = os.environ['DATABASE_URL']
 print('DATABASE URL: ' +database_url)
-engine = create_engine(database_url,echo=True)
+engine = create_engine(database_url, echo=True)
 
 Base = declarative_base()
 
@@ -18,7 +18,6 @@ class Record(Base):
     accountingType = Column(String)
     notes = Column(String)
     amount = Column(BigInteger)
-
 
     def __init__(self,date=None,accountingId=None,accountingPost=None,accountingType=None,notes=None,amount=None):
         self.date = date
