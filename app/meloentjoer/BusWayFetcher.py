@@ -6,7 +6,7 @@ import re
 import logging
 
 
-class BuswayFetcher:
+class BusWayFetcher:
     def __init__(self):
         pass
 
@@ -56,7 +56,7 @@ class BuswayFetcher:
                         buffers = []
         return return_lists,return_maps
 
-    #return dict( corridor Names (string) -> list of Station Names (string) )
+    # return dict( corridor Names (string) -> list of Station Names (string) )
     def get_routes(self):
         routes_table = dict()
         try:

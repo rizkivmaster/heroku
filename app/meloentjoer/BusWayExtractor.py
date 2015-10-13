@@ -1,8 +1,11 @@
 __author__ = 'traveloka'
 import numpy as np
-import BusWayCoordinateFetcher
-import BusWayFetcher
+from BusWayCoordinateFetcher import *
+from BusWayFetcher import *
+from StationLocation import *
+from BusETAEstimator import *
 import datetime
+import pprint
 
 
 class BusState:
@@ -13,32 +16,6 @@ class BusState:
         self.previous_time_stop = None
         self.stop_list = []
 
-
-class BusETAEstimator:
-    def __init__(self):
-        self.estimator_dictionary = dict()
-
-    def __get_key(self, origin, destination):
-        return "{0}_{1}".format(origin,destination)
-
-    def add_sample(self, origin, destination, delta):
-        key = self.__get_key(origin, destination)
-        delta = float(delta)
-        if key in self.estimator_dictionary:
-            delta_mean, sample_size = self.estimator_dictionary[key]
-            new_delta_mean = (delta+(sample_size*delta_mean))/(sample_size+1)
-            self.estimator_dictionary[key] = (new_delta_mean, sample_size+1)
-        else:
-            self.estimator_dictionary[key] = (delta, 1)
-
-    # params: station name:String, station name:string
-    # return: seconds prediction (float)
-    def predict_eta(self, origin, destination):
-        key = self.__get_key(origin, destination)
-        if key in self.estimator_dictionary.has_key(key):
-            return self.estimator_dictionary[key]
-        else:
-            return None
 
 
 class BusLocator:
@@ -57,18 +34,22 @@ class BusLocator:
         return station_list
 
 
-class BusExtractor:
+class BusWayExtractor:
 
-    def __init__(self, coordinates_mapper, mapping_threshold):
+    def __init__(self, coordinates_mapper=None, mapping_threshold=None, bus_routes=None):
+        if coordinates_mapper is None:
+            coordinates_mapper = station_location
+        if mapping_threshold is None:
+            mapping_threshold = default_threshold
         self.bus_states = dict()
         self.eta_estimator = BusETAEstimator()
         self.bus_locator = BusLocator(coordinates_mapper, mapping_threshold)
         self.bus_coordinate_fetcher = BusWayCoordinateFetcher()
-        self.bus_routes = BusWayFetcher().get_routes()
+        self.bus_routes = bus_routes
         self.bus_next_stops = dict()
 
     def __is_in(self, stop_list, station_list):
-        if len(station_list) == 0 or len(stop_list) == 0:
+        if len(station_list) < 2 or len(stop_list) < 2:
             return False
         if stop_list[0] == station_list[0]:
             if stop_list[-1] == station_list[-1]:
@@ -76,7 +57,7 @@ class BusExtractor:
             else:
                 return self.__is_in(stop_list, station_list[:-1])
         else:
-            return self.__find_segment(stop_list, station_list[1:])
+            return self.__is_in(stop_list, station_list[1:])
 
     def __add_sample(self, buses_data):
         bus_names = buses_data.keys()
@@ -86,20 +67,22 @@ class BusExtractor:
         # update bus states
         for bus_name, bus_stop in bus_name_stops:
             if bus_name in self.bus_states:
-                bus_state = BusState(self.bus_states[bus_name])
-                if bus_state.last_station == bus_stop:
+                bus_state = self.bus_states[bus_name]
+                if not bus_state.last_station == bus_stop:
                     bus_state.previous_station = bus_state.last_station
-                    bus_state.last_time_stop = bus_state.last_time_stop
-                    bus_state.last_station = bus_name
+                    bus_state.previous_time_stop = bus_state.last_time_stop
+                    bus_state.last_station = bus_stop
                     bus_state.last_time_stop = datetime.datetime.utcnow()
                     bus_state.stop_list.append(bus_stop)
                     self.bus_states[bus_name] = bus_state
 
-                    if bus_state.previous_station is not None:
+                    if bus_state.last_time_stop is not None and bus_state.previous_time_stop is not None:
                         origin = bus_state.previous_station
                         destination = bus_state.last_station
                         delta = (bus_state.last_time_stop - bus_state.previous_time_stop).seconds
+                        logging.info('Learn from {0} to {1} is {2}'.format(origin, destination, delta))
                         self.eta_estimator.add_sample(origin, destination, delta)
+
             else:
                 bus_state = BusState()
                 bus_state.last_station = bus_stop
@@ -119,19 +102,24 @@ class BusExtractor:
                     last_index = forward_route.index(last_station)
                     if last_index+1 < len(forward_route):
                         next_stop = forward_route[last_index+1]
-                        prediction = self.eta_estimator.predict_eta(last_station,next_stop)
-                        self.bus_next_stops[next_stop] = (bus_name, prediction)
+                        prediction = self.eta_estimator.predict_eta(last_station, next_stop)
+                        if next_stop not in self.bus_next_stops:
+                            self.bus_next_stops[next_stop] = []
+                        self.bus_next_stops[next_stop].append((bus_name, prediction, last_station))
 
                 if self.__is_in(bus_state.stop_list, backward_route):
                     last_station = bus_state.last_station
                     last_index = backward_route.index(last_station)
                     if last_index+1 < len(backward_route):
                         next_stop = backward_route[last_index+1]
-                        prediction = self.eta_estimator.predict_eta(last_station,next_stop)
-                        self.bus_next_stops[next_stop] = (bus_name, prediction)
+                        prediction = self.eta_estimator.predict_eta(last_station, next_stop)
+                        if next_stop not in self.bus_next_stops:
+                            self.bus_next_stops[next_stop] = []
+                        self.bus_next_stops[next_stop].append((bus_name, prediction, last_station))
 
     def run_extractor(self):
         while True:
             buses_data = self.bus_coordinate_fetcher.request_buses()
             self.__add_sample(buses_data)
-            print(self.bus_next_stops)
+            print(datetime.datetime.now())
+            pprint.pprint(self.bus_next_stops)
