@@ -1,42 +1,15 @@
-__author__ = 'traveloka'
-import numpy as np
-from BusWayCoordinateFetcher import *
-from BusWayFetcher import *
-from StationLocation import *
-from BusETAEstimator import *
 import datetime
+import logging
 import pprint
+from app.meloentjoer.tracker.BusLocator import BusLocator
+from app.meloentjoer.tracker.BusState import BusState
+from BusWayCoordinateFetcher import BusWayCoordinateFetcher
+from app.meloentjoer.tracker.StationLocation import station_location, default_threshold
+from BusETAEstimator import BusETAEstimator
 
 
-class BusState:
-    def __init__(self):
-        self.last_station = None
-        self.last_time_stop = None
-        self.previous_station = None
-        self.previous_time_stop = None
-        self.stop_list = []
-
-
-
-class BusLocator:
-    # coordinates_mapper: triple of station name,lat,lon(string,float,float)
-    def __init__(self, coordinates_mapper, threshold):
-        self.coordinates_mapper = coordinates_mapper
-        self.threshold = float(threshold)
-
-    # coordinates: list of coordinate(tuple of float)
-    def locate(self, bus_coordinates):
-        station_list = []
-        for bus_coordinate in bus_coordinates:
-            bus_coordinate = np.array(bus_coordinate)
-            closest_coordinate, closest_station = min(map(lambda x: (np.linalg.norm(bus_coordinate-np.array((x[1], x[2]))), x), self.coordinates_mapper))
-            station_list.append(closest_station[0] if(closest_coordinate < self.threshold) else None)
-        return station_list
-
-
-class BusWayExtractor:
-
-    def __init__(self, coordinates_mapper=None, mapping_threshold=None, bus_routes=None):
+class BuswayDataExtractionService:
+    def __init__(self, coordinates_mapper, mapping_threshold, bus_routes):
         if coordinates_mapper is None:
             coordinates_mapper = station_location
         if mapping_threshold is None:
@@ -59,9 +32,22 @@ class BusWayExtractor:
         else:
             return self.__is_in(stop_list, station_list[1:])
 
+    def __key(self, source, destination, current):
+        """
+        :type source:str
+        :type destination:str
+        :type current:str
+        :param source:
+        :param destination:
+        :param current:
+        :return:
+        """
+        return '{0}_{1}_{2}'.format(source, destination, current)
+
     def __add_sample(self, buses_data):
         bus_names = buses_data.keys()
-        bus_coordinates = [(float(buses_data[bus_name]['lat']), float(buses_data[bus_name]['lon'])) for bus_name in bus_names]
+        bus_coordinates = [(float(buses_data[bus_name]['lat']), float(buses_data[bus_name]['lon'])) for bus_name in
+                           bus_names]
         bus_stops = self.bus_locator.locate(bus_coordinates)
         bus_name_stops = filter(lambda x: x[1] is not None, zip(bus_names, bus_stops))
         # update bus states
@@ -100,22 +86,24 @@ class BusWayExtractor:
                 if self.__is_in(bus_state.stop_list, forward_route):
                     last_station = bus_state.last_station
                     last_index = forward_route.index(last_station)
-                    if last_index+1 < len(forward_route):
-                        next_stop = forward_route[last_index+1]
+                    if last_index + 1 < len(forward_route):
+                        next_stop = forward_route[last_index + 1]
+                        key = self.__key(forward_route[0], forward_route[1], next_stop)
                         prediction = self.eta_estimator.predict_eta(last_station, next_stop)
-                        if next_stop not in self.bus_next_stops:
-                            self.bus_next_stops[next_stop] = []
-                        self.bus_next_stops[next_stop].append((bus_name, prediction, last_station))
+                        if key not in self.bus_next_stops:
+                            self.bus_next_stops[key] = []
+                        self.bus_next_stops[key].append((bus_name, prediction, last_station))
 
                 if self.__is_in(bus_state.stop_list, backward_route):
                     last_station = bus_state.last_station
                     last_index = backward_route.index(last_station)
-                    if last_index+1 < len(backward_route):
-                        next_stop = backward_route[last_index+1]
+                    if last_index + 1 < len(backward_route):
+                        next_stop = backward_route[last_index + 1]
+                        key = key = '{0}_{1}_{2}'.format(backward_route[0], backward_route[1], next_stop)
                         prediction = self.eta_estimator.predict_eta(last_station, next_stop)
-                        if next_stop not in self.bus_next_stops:
-                            self.bus_next_stops[next_stop] = []
-                        self.bus_next_stops[next_stop].append((bus_name, prediction, last_station))
+                        if key not in self.bus_next_stops:
+                            self.bus_next_stops[key] = []
+                        self.bus_next_stops[key].append((bus_name, prediction, last_station))
 
     def run_extractor(self):
         while True:
@@ -123,3 +111,15 @@ class BusWayExtractor:
             self.__add_sample(buses_data)
             print(datetime.datetime.now())
             pprint.pprint(self.bus_next_stops)
+
+    def get_next_buses(self, source, destination, next_stop):
+        """
+        :type next_stop: str
+        :type source: str
+        :type destination: str
+        :param next_stop:
+        :return:
+        """
+        key = self.__key(source, destination, next_stop)
+        next_bus_list = self.bus_next_stops[key] if key in self.bus_next_stops else []
+        return next_bus_list

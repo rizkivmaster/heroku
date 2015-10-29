@@ -1,6 +1,3 @@
-__author__ = 'traveloka'
-
-
 class TrieNode:
     def __init__(self):
         self.childNodes = dict()
@@ -29,15 +26,3 @@ class TrieNode:
                 return self.dfs(rest[1:])
             else:
                 return None
-
-
-class AutoComplete:
-
-    def __init__(self):
-        self.trie = TrieNode()
-
-    def add_keyword(self, word, key):
-        self.trie.add_word(word, key)
-
-    def get_word(self, key):
-        return self.trie.dfs(key)

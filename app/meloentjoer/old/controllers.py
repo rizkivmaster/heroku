@@ -190,7 +190,7 @@ class PQueue(object):
     def put(self,data,priority):
         pair = (data,priority)
         self.datas.append(pair)
-        self.datas.sort(cmp=lambda x,y: x[1]-y[1])
+        self.datas.sort(cmp=lambda x, y: x[1]-y[1])
         
     def deque(self):
         if(len(self.datas)==0):
@@ -220,6 +220,11 @@ class Mode(object):
             return '{0} {1} {2} {3} {4}'.format(self.origin,self.trnsName,self.destination,self.price,self.eta)
 import copy
 def parseMode(text):
+    """
+    parse mode spec into mode object
+    :param text: mode spec format: originName, destinationName, transportationName, price ordinal, eta ordinal
+    :return: a mode object
+    """
     arr = text.split(',')
     mode = Mode()
     mode.trnsName = arr[2]

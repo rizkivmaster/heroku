@@ -1,0 +1,4 @@
+{
+  "DATABASE_URL":"postgresql://postgres:12345@localhost:5432/meloentjoer",
+  "HOST_URL":"http://localhost:5000/meloentjoer/"
+}

@@ -1,9 +1,12 @@
+from app.meloentjoer.common.ModelBase import ModelBase
+from sqlalchemy import Column, String
+
 __author__ = 'traveloka'
 
-from PostgreBase import *
+from app.meloentjoer.common.PostgreBase import *
 
 
-class NewModel(Base):
+class NewModel(ModelBase):
     __tablename__ = 'NewModel'
     name = Column(String, primary_key=True)
 
@@ -30,4 +33,4 @@ class NewModelPostgresAccessor(PostgresAccessorBase, NewModelAccessor):
         self.commit()
 
     def get_all(self):
-        return self.query(NewModel).all()
+        return self.query.all()

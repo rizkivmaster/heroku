@@ -1,21 +1,32 @@
 __author__ = 'traveloka'
 
 from bs4 import BeautifulSoup
+from app.meloentjoer.util.LinkedHash import LinkedHash
 import urllib2
 import re
 import logging
 
 
-class BusWayFetcher:
+class TransportationFetcher:
     def __init__(self):
         pass
 
     def __scrap(self, link):
         html = urllib2.urlopen(link)
-        scrapper = BeautifulSoup(html,'html.parser')
+        scrapper = BeautifulSoup(html, 'html.parser')
         return scrapper
 
-    def __row_parser(self,text):
+    def scrap(self, link):
+        """
+        :type link: str
+        :param link: string
+        :return:
+        """
+        html = urllib2.urlopen(link)
+        scrapper = BeautifulSoup(html, 'html.parser')
+        return scrapper
+
+    def __row_parser(self, text):
         innertext = re.findall('[a-zA-Z0-9 ]+[a-zA-Z0-9]', text)
         if not len(innertext) == 0:
             return re.sub('[^a-zA-Z0-9 ]+', '', innertext[0]).strip()
@@ -44,24 +55,30 @@ class BusWayFetcher:
                     buffers.append(item['title'])
                 else:
                     for a_buffer in buffers:
-                        return_lists.add(a_buffer+'_'+str(item.getText()))
-                        return_maps[a_buffer+'_'+str(item.getText())] = (a_buffer, str(item.getText()))
+                        return_lists.add(a_buffer + '_' + str(item.getText()))
+                        return_maps[a_buffer + '_' + str(item.getText())] = (a_buffer, str(item.getText()))
                     buffers = []
             if item.next_sibling is not None:
                 if item.next_sibling.string is not None:
                     if not item.next_sibling.strip() == '':
                         for a_buffer in buffers:
-                            return_lists.add(a_buffer+'_'+str(item.next_sibling).strip())
-                            return_maps[a_buffer+'_'+str(item.next_sibling).strip()] = (a_buffer, str(item.next_sibling).strip())
-                        buffers = []
-        return return_lists,return_maps
+                            return_lists.add(a_buffer + '_' + str(item.next_sibling).strip())
+                            value = (a_buffer, str(item.next_sibling).strip())
+                            return_maps[a_buffer + '_' + str(item.next_sibling).strip()] = value
 
-    # return dict( corridor Names (string) -> list of Station Names (string) )
-    def get_routes(self):
+                        buffers = []
+        return return_lists, return_maps
+
+    def get_busway_routes(self):
+        """
+        scrape the routes
+
+        :return: dict( corridor Names (string) -> list of Station Names (string) )
+        """
         routes_table = dict()
         try:
             scrapper = self.__scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
-            main_content = scrapper.find('div', attrs={'id':'mw-content-text'})
+            main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
             tables = main_content.find_all('table', {'class': 'wikitable'})
             logging.info("Fetching bus way routes")
             for table in tables:
@@ -76,4 +93,18 @@ class BusWayFetcher:
             logging.info("Finished fetching bus way routes")
         except Exception, e:
             logging.error(e.message)
+        return routes_table
+
+    def get_train_routes(self):
+        train_scrapper = self.__scrap(
+            'https://en.wikipedia.org/w/index.php?title=KA_Commuter_Jabodetabek&oldid=683328854')
+        raw_tables = train_scrapper.select('dl > dd > b')
+        routes_table = dict()
+        for table in raw_tables:
+            line_name = \
+                re.findall('[a-zA-Z0-9 ]+[a-zA-Z0-9]', table.parent.parent.previousSibling.previousSibling.string)[
+                    0].strip()
+            station_list = LinkedHash(
+                map(lambda x: x.strip(), re.sub(u'\u2192', ',', re.sub('\\.', '', table.parent.getText())).split(',')))
+            routes_table[line_name] = station_list
         return routes_table

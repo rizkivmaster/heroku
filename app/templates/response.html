@@ -1,36 +1,45 @@
 
 {% for entry in entries %}
 <ul class="list-group">
-  <li class="list-group-item active">
-    <span class="badge">{{ entry.head[0] }} menit</span><span class="badge">Rp. {{entry.head[1] }}</span><h4 class="list-group-item-heading">Dari {{ entry.head[3] }} ke {{ entry.head[4] }} 
-    {% if entry.head[5]!=None %}
-     (via {{ entry.head[5] }})
+  {% if next_bus!=None %}
+    <li class="list-group-item active">
+    <span class="badge">{{ next_bus.eta }} menit</span><h4 class="list-group-item-heading">Bus berikutnya berada di {{ next_bus.current_stop }}
+  </h4>
+</li>
+</ul>
     {% endif %}
-    </h4>
-    <p class="list-group-item-text">{{ entry.head[2] }} pemberhentian</p></li>
+  <ul class="list-group">  
 
-    {% for mode in entry.trail %}
+  <li class="list-group-item active">
+    <span class="badge">{{ entry.time }} menit</span><span class="badge">Rp. {{entry.price }}</span><h4 class="list-group-item-heading">Dari {{ entry.source }} ke {{ entry.destination }}
+    {% if entry.branch!=None %}
+    (via {{ entry.branch }})
+    {% endif %}
+  </h4>
+  <p class="list-group-item-text">{{ entry.mode_list_count }} pemberhentian</p></li>
 
-    {% if mode.trnsName=='Transfer' %}
+  {% for mode in entry.mode_list %}
 
-     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span>
+  {% if mode.name=='Transfer' %}
+
+  <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span>
     Transfer ke <i>{{ mode.destination }}</i></li>
 
-    {% elif mode.trnsName=='Jalan Kaki' %}
-     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span> Dari {{ mode.origin }},
+    {% elif mode.name=='Jalan Kaki' %}
+    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span> Dari {{ mode.origin }},
      jalan kaki ke {{ mode.destination }}</li>
 
-    {% elif 'TransJakarta' in mode.trnsName %}
-    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
-    <span class="glyphicon glyphicon-bed"></span> {{mode.origin}} <span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.trnsName}}</i></li>
+     {% elif 'TransJakarta' in mode.name %}
+     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+      <span class="glyphicon glyphicon-bed"></span> {{mode.origin}} <span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.name}}</i></li>
 
-    {% elif 'KRL' in mode.trnsName %}
+      {% elif 'KRL' in mode.name %}
 
-    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
-    <span class="glyphicon glyphicon-scale"> </span> {{mode.origin}}<span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.trnsName}}</i></li>
-    {% endif %}
+      <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+        <span class="glyphicon glyphicon-scale"> </span> {{mode.origin}}<span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.name}}</i></li>
+        {% endif %}
 
-    {% endfor %}
+        {% endfor %}
 
-        </ul>
-              {% endfor %}
+      </ul>
+      {% endfor %}
