@@ -69,3 +69,11 @@ def get_thread_size():
     :return:
     """
     return 32
+
+
+def get_eta_refresh_period():
+    """
+    :rtype int
+    :return:
+    """
+    return 10

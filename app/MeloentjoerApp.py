@@ -1,4 +1,4 @@
-from app.meloentjoer.controllers.Controller import MeloentjoerController
+from app.meloentjoer.controllers.main_controller import MeloentjoerController
 from app.meloentjoer.fetcher.geo.TransportationFetcher import TransportationFetcher
 from app.meloentjoer.search.AutocompleteService import AutocompleteService
 from app.meloentjoer.search.SearchService import SearchService

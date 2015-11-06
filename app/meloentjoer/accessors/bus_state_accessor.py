@@ -1,4 +1,4 @@
-bus_state_cache = dict()
+__bus_state_cache = dict()
 
 
 def upset_bus_state(bus_state):
@@ -8,7 +8,7 @@ def upset_bus_state(bus_state):
     :return:
     """
     if bus_state.name is not None:
-        bus_state_cache[bus_state.name] = bus_state
+        __bus_state_cache[bus_state.name] = bus_state
 
 
 def get_bus_state(bus_name):
@@ -17,10 +17,14 @@ def get_bus_state(bus_name):
     :param bus_name:
     :return: BusState
     """
-    if bus_name is not None and bus_name in bus_state_cache:
-        return bus_state_cache[bus_name]
+    if bus_name is not None and bus_name in __bus_state_cache:
+        return __bus_state_cache[bus_name]
     return None
 
 
 def get_all_bus_state():
-    return bus_state_cache.values()
+    return __bus_state_cache.values()
+
+
+def reset():
+    __bus_state_cache.clear()

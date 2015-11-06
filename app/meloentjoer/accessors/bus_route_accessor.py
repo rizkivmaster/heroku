@@ -1,7 +1,7 @@
-from app.meloentjoer.accessors.bus_routes.BusRoute import BusRoute
+from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.common.databases.ModelBase import ModelBase
 from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
-from app.meloentjoer.config import general_config
+from app.meloentjoer.config import general_config as __config
 from sqlalchemy import String, Column
 
 
@@ -22,7 +22,7 @@ class BusRouteModel(ModelBase):
 
 
 bus_routes_session = PostgresAccessorBase(BusRouteModel,
-                                          general_config.get_database_url())
+                                          __config.get_database_url())
 
 
 def reset():

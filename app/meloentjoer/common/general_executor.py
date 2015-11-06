@@ -1,4 +1,3 @@
-from app.meloentjoer.common.executors.SchedulerExecutor import SchedulerExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
 from app.meloentjoer.config import general_config
 
@@ -11,7 +10,3 @@ def submit(func):
 
 def shutdown():
     executor.shutdown()
-
-
-def schedule(period, task):
-    return SchedulerExecutor(period, task)
