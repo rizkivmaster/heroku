@@ -1,4 +1,4 @@
-from app.meloentjoer.util.TrieNode import TrieNode
+from app.meloentjoer.common.util.TrieNode import TrieNode
 
 __author__ = 'traveloka'
 
@@ -8,7 +8,7 @@ class AutocompleteService:
         self.trie = TrieNode()
 
     def add_keyword(self, word, key):
-        self.trie.add_word(word, key, key)
+        self.trie.add_word(word, key)
 
     def get_words(self, key):
         node = self.trie.dfs(key)

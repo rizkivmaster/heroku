@@ -1,6 +1,6 @@
 from app.meloentjoer.controllers.NextBus import NextBus
 from app.meloentjoer.search.SearchResult import SearchResult
-from app.meloentjoer.tracker.BuswayDataExtractionService import BuswayDataExtractionService
+from app.meloentjoer.tracking.BuswayDataExtractionService import BuswayDataExtractionService
 
 
 class SearchService(object):

@@ -1,6 +1,6 @@
 from app.meloentjoer.search.BuswayMode import BuswayMode
 from app.meloentjoer.search.SearchComponent import busway_fetcher
-from app.meloentjoer.tracker.TrackerComponent import busETAEstimator
+from app.meloentjoer.tracking.TrackerComponent import busETAEstimator
 
 
 class RealtimeBuswayGenerator(object):

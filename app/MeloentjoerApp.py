@@ -1,11 +1,11 @@
 from app.meloentjoer.controllers.Controller import MeloentjoerController
-from app.meloentjoer.search.TransportationFetcher import TransportationFetcher
+from app.meloentjoer.fetcher.geo.TransportationFetcher import TransportationFetcher
 from app.meloentjoer.search.AutocompleteService import AutocompleteService
 from app.meloentjoer.search.SearchService import SearchService
 from app.meloentjoer.search.TransportationGraphBuilder import TransportationGraphBuilder
-from app.meloentjoer.tracker.BuswayDataExtractionService import BuswayDataExtractionService
-from app.meloentjoer.tracker.StationLocation import station_location, default_threshold
-from app.meloentjoer.config.Configs import common_config
+from app.meloentjoer.tracking.BuswayDataExtractionService import BuswayDataExtractionService
+from app.meloentjoer.accessors.geo_data.GeoDataAccessor import station_location, default_threshold
+from app.meloentjoer.config.GeneralConfig import common_config
 from flask import Flask
 
 

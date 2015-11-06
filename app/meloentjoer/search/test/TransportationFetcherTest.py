@@ -1,7 +1,8 @@
 __author__ = 'traveloka'
 
 import unittest
-from app.meloentjoer.search.TransportationFetcher import TransportationFetcher
+
+from app.meloentjoer.fetcher.geo.TransportationFetcher import TransportationFetcher
 
 
 class TransportationFetcherTest(unittest.TestCase):

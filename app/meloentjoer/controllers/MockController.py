@@ -1,7 +1,7 @@
 from app.meloentjoer.controllers.NextBus import NextBus
 from app.meloentjoer.search.MockSearchTransducer import MockSearchTransducer
 from flask import Blueprint, render_template, jsonify, request
-from app.meloentjoer.config.Configs import common_config
+from app.meloentjoer.config.GeneralConfig import common_config
 import json
 
 host_url = common_config.get_host_name()

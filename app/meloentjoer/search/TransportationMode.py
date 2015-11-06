@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer
 from sqlalchemy import Binary
-from app.meloentjoer.common.ModelBase import ModelBase
+from app.meloentjoer.common.databases.ModelBase import ModelBase
 
 
 class TransportationMode(ModelBase):

@@ -1,4 +1,4 @@
-from app.meloentjoer.tracker.BuswayDataExtractionService import BuswayDataExtractionService
+from app.meloentjoer.tracking.BuswayDataExtractionService import BuswayDataExtractionService
 
 __author__ = 'traveloka'
 

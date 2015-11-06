@@ -1,9 +1,8 @@
-from app.meloentjoer.common.ModelBase import ModelBase
 from sqlalchemy import Column, String
 
 __author__ = 'traveloka'
 
-from app.meloentjoer.common.PostgreBase import *
+from app.meloentjoer.common.databases.PostgreBase import *
 
 
 class NewModel(ModelBase):

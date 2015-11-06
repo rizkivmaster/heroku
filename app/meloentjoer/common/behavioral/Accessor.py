@@ -1,0 +1,2 @@
+class Accessor(object):
+    pass
