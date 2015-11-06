@@ -2,16 +2,15 @@ import unittest
 import time
 
 from app.meloentjoer.accessors.bus_routes.BusRoutePostgresAccessorImpl import BusRoutePostgresAccessorImpl
-from app.meloentjoer.fetcher.geo.TransportationFetcher import TransportationFetcher
 from app.meloentjoer.test.TestDefault import *
+import transportation_fetcher
 
 
 class Tester(unittest.TestCase):
     def test_Fetcher(self):
         accessor = BusRoutePostgresAccessorImpl(config)
         accessor.reset()
-        fetcher = TransportationFetcher(executor, accessor, config)
-        fetcher.start()
+        transportation_fetcher.start()
         time.sleep(11)
         routes = accessor.get_all_bus_routes()
         self.assertIsNotNone(routes)

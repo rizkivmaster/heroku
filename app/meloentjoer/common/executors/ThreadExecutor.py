@@ -1,6 +1,6 @@
 from app.meloentjoer.common.executors.PoolExecutor import PoolExecutor
 from app.meloentjoer.config.GeneralConfig import GeneralConfig
-from concurrent.futures.thread import ThreadPoolExecutor
+from thread_executor.futures.thread import ThreadPoolExecutor
 
 
 class ThreadExecutor(PoolExecutor):

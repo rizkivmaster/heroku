@@ -3,7 +3,7 @@ import unittest
 from app.meloentjoer.config.GeneralConfig import GeneralConfig
 from app.meloentjoer.accessors.eta_estimates.BusEstimationPostgresAccessorImpl import BusEstimationProsgresAccessorImpl
 from CachedBusEstimationAccessor import CachedBusEstimationAccessor
-from concurrent.futures import ThreadPoolExecutor
+from thread_executor.futures import ThreadPoolExecutor
 
 
 class Tester(unittest.TestCase):

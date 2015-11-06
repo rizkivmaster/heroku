@@ -1,14 +1,15 @@
 import time
 
+from app.meloentjoer.common import general_executor
+
 from app.meloentjoer.common.exceptions.AlreadyRunException import AlreadyRunException
 
 
 class SchedulerExecutor(object):
-    def __init__(self, executor, period, task):
+    def __init__(self, period, task):
         self.period = period
         self.task = task
         self.isOff = True
-        self.executor = executor
 
     def start(self):
         if self.isOff:
@@ -19,7 +20,7 @@ class SchedulerExecutor(object):
                     self.task()
                     time.sleep(self.period)
 
-            self.executor.submit(routine)
+            general_executor.submit(routine)
         else:
             raise AlreadyRunException('A process is still running')
 
