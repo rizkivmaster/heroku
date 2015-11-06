@@ -18,3 +18,6 @@ class ServiceTest(unittest.TestCase):
         self.assertTrue(len(bag_of_words) > 0)
         transportation_info_fetcher.stop()
         autocomplete_service.stop()
+
+    def runTest(self):
+        self.test_autocomplete()

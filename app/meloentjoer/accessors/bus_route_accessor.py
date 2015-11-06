@@ -1,3 +1,4 @@
+import logging
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.common.databases.ModelBase import ModelBase
 from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
@@ -65,3 +66,5 @@ def upset_bus_route(bus_route):
         bus_routes_session.add(raw_bus_route)
     raw_bus_route.stations = ','.join(bus_route.stations)
     bus_routes_session.commit()
+
+

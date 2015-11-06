@@ -28,3 +28,7 @@ class AccessorTest(unittest.TestCase):
         real_value = bus_estimattion_accessor.predict_eta('jalan1', 'jalan2')
         self.assertEqual(real_value, 50)
         bus_estimattion_accessor.stop()
+
+    def runTest(self):
+        self.test_bus_estimate_accessor()
+        self.test_bus_routes_accessor()

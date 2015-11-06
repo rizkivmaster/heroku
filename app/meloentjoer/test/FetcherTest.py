@@ -14,3 +14,6 @@ class FetcherTest(unittest.TestCase):
         self.assertIsNotNone(routes)
         self.assertTrue(len(routes) > 0)
         app.meloentjoer.fetcher.transportation_info_fetcher.stop()
+
+    def runTest(self):
+        self.test_transporation_fetcher()
