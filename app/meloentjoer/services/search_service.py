@@ -1,9 +1,9 @@
-from app.meloentjoer.accessors import bus_route_accessor, bus_estimate_accessor
+from app.meloentjoer.accessors import bus_route_accessor, bus_estimattion_accessor
 from app.meloentjoer.accessors.entity.NextBus import NextBus
 from app.meloentjoer.common.util.ConnectedGraph import ConnectedGraph
 from app.meloentjoer.config import general_config
-from app.meloentjoer.search.BuswayMode import BuswayMode
-from app.meloentjoer.search.SearchResult import SearchResult
+from app.meloentjoer.services.entity.BuswayMode import BuswayMode
+from app.meloentjoer.services.entity.SearchResult import SearchResult
 
 
 def __generate_busway_mode():
@@ -19,7 +19,7 @@ def __generate_busway_mode():
         origin_list = station_list[:-1]
         destination_list = station_list[1:]
         for origin, destination in zip(origin_list, destination_list):
-            eta = bus_estimate_accessor.predict_eta(origin, destination)
+            eta = bus_estimattion_accessor.predict_eta(origin, destination)
             eta = eta if eta else general_config.get_default_eta()
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'
@@ -31,7 +31,7 @@ def __generate_busway_mode():
             mode_list.append(bus_mode)
 
         for destination, origin in zip(origin_list, destination_list):
-            eta = bus_estimate_accessor.predict_eta(origin, destination)
+            eta = bus_estimattion_accessor.predict_eta(origin, destination)
             eta = eta if eta else general_config.get_default_eta()
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'

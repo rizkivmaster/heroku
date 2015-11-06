@@ -1,9 +1,9 @@
 import logging
 import datetime
 
-from app.meloentjoer.accessors import geo_data_accessor, bus_route_accessor, bus_state_accessor, bus_estimate_accessor, \
+from app.meloentjoer.accessors import geo_data_accessor, bus_route_accessor, bus_state_accessor, bus_estimattion_accessor, \
     next_bus_accessor
-from app.meloentjoer.accessors.NextBus import NextBus
+from app.meloentjoer.accessors.entity.NextBus import NextBus
 from app.meloentjoer.common import general_scheduler
 from app.meloentjoer.config import general_config as __general_config, general_config
 from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
@@ -68,7 +68,7 @@ def __update_bus_states_and_bus_queues(buses_data,
                     destination = bus_state.last_station
                     delta = (bus_state.last_time_stop - bus_state.previous_time_stop).seconds
                     logging.info('Learn from {0} to {1} is {2}'.format(origin, destination, delta))
-                    bus_estimate_accessor.add_sample(origin, destination, delta)
+                    bus_estimattion_accessor.add_sample(origin, destination, delta)
 
         else:
             bus_state = BusState()
@@ -89,7 +89,7 @@ def __update_bus_states_and_bus_queues(buses_data,
                 last_index = forward_route.index(last_station)
                 if last_index + 1 < len(forward_route):
                     next_stop = forward_route[last_index + 1]
-                    prediction = bus_estimate_accessor.predict_eta(last_station, next_stop)
+                    prediction = bus_estimattion_accessor.predict_eta(last_station, next_stop)
                     next_bus = NextBus()
                     next_bus.bus_name = bus_name
                     next_bus.prediction = prediction
@@ -102,7 +102,7 @@ def __update_bus_states_and_bus_queues(buses_data,
                 last_index = backward_route.index(last_station)
                 if last_index + 1 < len(backward_route):
                     next_stop = backward_route[last_index + 1]
-                    prediction = bus_estimate_accessor.predict_eta(last_station, next_stop)
+                    prediction = bus_estimattion_accessor.predict_eta(last_station, next_stop)
                     next_bus = NextBus()
                     next_bus.bus_name = bus_name
                     next_bus.prediction = prediction

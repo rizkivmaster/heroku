@@ -1,5 +1,5 @@
 import json
-from app.meloentjoer.accessors import bus_route_accessor, bus_estimate_accessor, bus_state_accessor, next_bus_accessor
+from app.meloentjoer.accessors import bus_route_accessor, bus_estimattion_accessor, bus_state_accessor, next_bus_accessor
 from app.meloentjoer.fetcher import transportation_info_fetcher, busway_track_fetcher
 from app.meloentjoer.services import autocomplete_service, search_service
 from flask import Blueprint, render_template, jsonify, request
@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, jsonify, request
 meloentjoer = Blueprint('meloentjoer', __name__)
 
 # warming up
-bus_estimate_accessor.start()
+bus_estimattion_accessor.start()
 bus_state_accessor.reset()
 next_bus_accessor.reset()
 bus_route_accessor.reset()

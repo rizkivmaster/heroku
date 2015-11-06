@@ -1,6 +1,6 @@
 import unittest
 
-from app.meloentjoer.accessors import bus_route_accessor, bus_estimate_accessor
+from app.meloentjoer.accessors import bus_route_accessor, bus_estimattion_accessor
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 
 
@@ -19,12 +19,12 @@ class AccessorTest(unittest.TestCase):
         assert (post_bus_route.stations[0] == bus_route.stations[0])
 
     def test_bus_estimate_accessor(self):
-        bus_estimate_accessor.reset()
-        bus_estimate_accessor.start()
-        bus_estimate_accessor.add_sample('jalan1', 'jalan2', 90)
-        real_value = bus_estimate_accessor.predict_eta('jalan1', 'jalan2')
+        bus_estimattion_accessor.reset()
+        bus_estimattion_accessor.start()
+        bus_estimattion_accessor.add_sample('jalan1', 'jalan2', 90)
+        real_value = bus_estimattion_accessor.predict_eta('jalan1', 'jalan2')
         self.assertEqual(real_value, 90)
-        bus_estimate_accessor.add_sample('jalan1', 'jalan2', 10)
-        real_value = bus_estimate_accessor.predict_eta('jalan1', 'jalan2')
+        bus_estimattion_accessor.add_sample('jalan1', 'jalan2', 10)
+        real_value = bus_estimattion_accessor.predict_eta('jalan1', 'jalan2')
         self.assertEqual(real_value, 50)
-        bus_estimate_accessor.stop()
+        bus_estimattion_accessor.stop()
