@@ -6,8 +6,6 @@ from flask import Blueprint, render_template, jsonify, request
 
 meloentjoer = Blueprint('meloentjoer', __name__)
 
-main_component.start()
-
 
 @meloentjoer.route('/retrieve/<string:word>')
 def retrieve_route(self, word):
@@ -25,9 +23,9 @@ def search_route(self):
 
 
 @meloentjoer.route('/')
-def index(self):
-    return render_template('autocomplete.html', host_url=self.host_url)
+def index():
+    return render_template('autocomplete.html', host_url=main_component.general_config.get_host_url())
 
 
 meloentjoer_app = Flask(__name__)
-meloentjoer_app.register_blueprint(meloentjoer, 'meloentjoer/')
+meloentjoer_app.register_blueprint(meloentjoer, url_prefix='/meloentjoer')

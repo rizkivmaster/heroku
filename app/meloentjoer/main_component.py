@@ -2,6 +2,7 @@ from app.meloentjoer.accessors import bus_route_accessor, bus_estimattion_access
     next_bus_accessor
 from app.meloentjoer.fetcher import transportation_info_fetcher, busway_track_fetcher
 from app.meloentjoer.services import autocomplete_service, search_service
+from app.meloentjoer.config import general_config
 
 
 def start():
@@ -20,3 +21,5 @@ def stop():
     transportation_info_fetcher.stop()
     busway_track_fetcher.stop()
     autocomplete_service.stop()
+
+start()

@@ -21,7 +21,7 @@ def get_database_url():
     return database_url
 
 
-def get_host_name():
+def get_host_url():
     host_name = config_json['HOST_URL']
     return host_name
 
