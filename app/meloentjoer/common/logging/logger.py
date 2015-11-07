@@ -1,12 +1,8 @@
 import logging
-from logging.handlers import BaseRotatingHandler
 
-__logger = logging.getLogger('meloentjoer')
+__logger = logging.getLogger()
 logging.basicConfig(level=logging.DEBUG)
-__logger.addHandler(BaseRotatingHandler('mj.log', 'w'))
-
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 __logger.addHandler(ch)

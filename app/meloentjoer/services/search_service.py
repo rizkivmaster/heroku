@@ -1,9 +1,13 @@
 from app.meloentjoer.accessors import bus_route_accessor, bus_estimattion_accessor
+from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.accessors.entity.NextBus import NextBus
+from app.meloentjoer.common.logging import logger as __logger
 from app.meloentjoer.common.util.ConnectedGraph import ConnectedGraph
 from app.meloentjoer.config import general_config
 from app.meloentjoer.services.entity.BuswayMode import BuswayMode
 from app.meloentjoer.services.entity.SearchResult import SearchResult
+
+__logger.info('Starting Search Service')
 
 
 def __generate_busway_mode():
@@ -13,9 +17,11 @@ def __generate_busway_mode():
     """
     mode_list = []
     bus_route_list = bus_route_accessor.get_all_bus_routes()
-    assert isinstance(bus_route_list, dict)
-    for corridor_name in bus_route_list.keys():
-        station_list = bus_route_list[corridor_name]
+    assert isinstance(bus_route_list, list)
+    for bus_route in bus_route_list:
+        assert isinstance(bus_route, BusRoute)
+        station_list = bus_route.stations
+        corridor_name = bus_route.corridor_name
         origin_list = station_list[:-1]
         destination_list = station_list[1:]
         for origin, destination in zip(origin_list, destination_list):
@@ -68,6 +74,12 @@ def __generate_transportation_graph():
 
 
 def get_direction(source, destination):
+    """
+    :rtype list[SearchResult]
+    :param source:
+    :param destination:
+    :return:
+    """
     direction_recommendation = []
     connected_graph = __generate_transportation_graph()
     assert isinstance(connected_graph, ConnectedGraph)

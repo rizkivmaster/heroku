@@ -1,9 +1,9 @@
-import logging
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.common.databases.ModelBase import ModelBase
 from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
 from app.meloentjoer.config import general_config as __config
 from sqlalchemy import String, Column
+from app.meloentjoer.common.logging import logger as __logger
 
 
 class BusRouteModel(ModelBase):
@@ -58,7 +58,10 @@ def upset_bus_route(bus_route):
     :return:
     """
     raw_bus_route = get_bus_route_by_corridor(bus_route.corridor_name)
-    assert (isinstance(raw_bus_route, BusRouteModel) if raw_bus_route is not None else True)
+    try:
+        assert (isinstance(raw_bus_route, BusRoute) if raw_bus_route is not None else True)
+    except AssertionError, e:
+        __logger.error(e)
     if raw_bus_route is None:
         raw_bus_route = BusRouteModel()
         raw_bus_route.corridor_name = bus_route.corridor_name
@@ -66,5 +69,3 @@ def upset_bus_route(bus_route):
         bus_routes_session.add(raw_bus_route)
     raw_bus_route.stations = ','.join(bus_route.stations)
     bus_routes_session.commit()
-
-

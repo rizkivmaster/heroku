@@ -44,7 +44,7 @@ def get_autocomplete_refresh_period():
     :rtype int
     :return:
     """
-    return 10
+    return 2
 
 
 def get_default_eta():
@@ -76,4 +76,4 @@ def get_eta_refresh_period():
     :rtype int
     :return:
     """
-    return 10
+    return 2

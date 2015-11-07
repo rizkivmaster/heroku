@@ -5,6 +5,7 @@ from app.meloentjoer.accessors import geo_data_accessor, bus_route_accessor, bus
     next_bus_accessor
 from app.meloentjoer.accessors.entity.NextBus import NextBus
 from app.meloentjoer.common import general_scheduler
+from app.meloentjoer.common.logging import logger as __logger
 from app.meloentjoer.config import general_config as __general_config, general_config
 from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
 from app.meloentjoer.accessors.entity.BusState import BusState
@@ -53,9 +54,10 @@ def __update_bus_states_and_bus_queues(buses_data,
     bus_state_list = bus_state_accessor.get_all_bus_state()
     for bus_name, bus_stop in bus_name_stops:
         bus_state = bus_state_accessor.get_bus_state(bus_name)
-        if bus_name is not None:
-            assert (isinstance(bus_state, BusState))
+        if bus_state is not None:
+            assert isinstance(bus_state, BusState)
             if not bus_state.last_station == bus_stop:
+                bus_state.name = bus_name
                 bus_state.previous_station = bus_state.last_station
                 bus_state.previous_time_stop = bus_state.last_time_stop
                 bus_state.last_station = bus_stop
@@ -72,6 +74,7 @@ def __update_bus_states_and_bus_queues(buses_data,
 
         else:
             bus_state = BusState()
+            bus_state.name = bus_name
             bus_state.last_station = bus_stop
             bus_state.last_time_stop = datetime.datetime.utcnow()
             bus_state.stop_list.append(bus_stop)
@@ -112,6 +115,7 @@ def __update_bus_states_and_bus_queues(buses_data,
 
 
 def __refresh():
+    __logger.info('Refreshing bus tracking data')
     bus_data = __helper.request_buses()
     mapping_threshold = __general_config.get_mapping_threshold()
     station_location = geo_data_accessor.get_station_location()
@@ -129,6 +133,8 @@ __scheduler = general_scheduler.schedule(general_config.get_eta_refresh_period()
 
 
 def start():
+    # hack: force to update immediately
+    __refresh()
     __scheduler.start()
 
 

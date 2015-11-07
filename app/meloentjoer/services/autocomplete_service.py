@@ -1,15 +1,16 @@
-import logging
 from app.meloentjoer.accessors import bus_route_accessor
 from app.meloentjoer.common import general_scheduler
+from app.meloentjoer.common.logging import logger as __logger
 from app.meloentjoer.common.util.TrieNode import TrieNode
 from app.meloentjoer.config import general_config
 
+__logger.info('Starting autocomplete service')
 __trie = TrieNode()
-__logger = logging.getLogger('autocomplete_service')
 
 
 def __update():
     try:
+        __logger.info('Refreshing autocomplete data')
         route_list = bus_route_accessor.get_all_bus_routes()
         word_pool = set()
         for route in route_list:
@@ -18,7 +19,6 @@ def __update():
                 word_pool.add(station)
         for word in word_pool:
             add_keyword(word, word)
-        __logger.info('Autocomplete refreshed successfully')
     except Exception, e:
         __logger.error('AutoComplete service failed to refresh')
         __logger.error(e)
