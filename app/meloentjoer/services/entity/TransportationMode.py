@@ -1,17 +1,4 @@
-from sqlalchemy import Column, String, Integer
-from sqlalchemy import Binary
-from app.meloentjoer.common.databases.ModelBase import ModelBase
-
-
-class TransportationMode(ModelBase):
-    __tablename__ = 'TransportationMode'
-    id = Column(Binary, primary_key=True, unique=True, autoincrement=True)
-    name = Column(String)
-    price = Column(Integer)
-    eta = Column(Integer)
-    destination = Column(String)
-    origin = Column(String)
-
+class TransportationMode(object):
     def __init__(self):
         self.name = None
         self.price = None

@@ -3,7 +3,7 @@ from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
 
 __author__ = 'traveloka'
 
-import logging
+from app.meloentjoer.common.logging import logger as __logger
 import urllib2
 import xml.etree.ElementTree as Et
 
@@ -81,7 +81,6 @@ def get_busway_routes():
         scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
         main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
         tables = main_content.find_all('table', {'class': 'wikitable'})
-        logging.info("Fetching bus way routes")
         for table in tables:
             route = BusRoute()
             rows = table.find_all('tr')
@@ -94,10 +93,8 @@ def get_busway_routes():
             route.stations = station_list
             route.corridor_name = corridor_name
             routes_list.append(route)
-        logging.info("Finished fetching bus way routes")
-
     except Exception, e:
-        logging.error(e.message)
+        __logger.error(e.message)
     return routes_list
 
 
@@ -131,7 +128,7 @@ def get_session_key():
             if 'PHPSESSID' in value:
                 return value.split(";")[0]
     except Exception, e:
-        logging.error(e)
+        __logger.error(e)
     return None
 
 
@@ -153,7 +150,7 @@ def request_buses():
     req.add_header('X-Requested-With', 'XMLHttpRequest')
     session_key = get_session_key()
     if session_key is None:
-        logging.error('No session key found')
+        __logger.error('No session key found')
         return None
     req.add_header('Cookie', session_key)
     response = urllib2.urlopen(req)

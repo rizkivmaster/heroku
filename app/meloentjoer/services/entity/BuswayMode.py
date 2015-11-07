@@ -1,9 +1,7 @@
 from TransportationMode import TransportationMode
-from sqlalchemy import String, Column
 
 
 class BuswayMode(TransportationMode):
-    corridor = Column(String, index=True)
 
     def __init__(self):
         super(BuswayMode, self).__init__()

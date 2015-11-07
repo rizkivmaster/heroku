@@ -1,4 +1,4 @@
-from app.meloentjoer.accessors import bus_route_accessor, bus_estimation_accessor
+from app.meloentjoer.accessors import bus_route_accessor, bus_estimation_accessor, next_bus_accessor
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.accessors.entity.NextBus import NextBus
 from app.meloentjoer.common.logging import logger as __logger
@@ -30,7 +30,7 @@ def __generate_busway_mode():
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'
             bus_mode.corridor = corridor_name
-            bus_mode.eta = eta
+            bus_mode.eta = eta/60.0
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination
@@ -42,7 +42,7 @@ def __generate_busway_mode():
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'
             bus_mode.corridor = corridor_name
-            bus_mode.eta = eta
+            bus_mode.eta = eta/60.0
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination
@@ -98,7 +98,8 @@ def get_direction(source, destination):
     return direction_recommendation
 
 
-def get_next_bus(self, source, destination, next_stop):
-    next_bus = self.next_bus_accessor.get_next_stop(source, destination, next_stop)
-    assert (isinstance(next_bus, NextBus))
+def get_next_bus(source, destination, next_stop):
+    next_bus = next_bus_accessor.get_next_stop(source, destination, next_stop)
+    if next_bus:
+        assert (isinstance(next_bus, NextBus))
     return next_bus
