@@ -1,0 +1,192 @@
+{% extends 'layout.html' %}
+{% block body %}
+	<script type="text/javascript">
+
+	var rowParser = function(value){
+		var text = 
+		"<td>"+value['date']+"</td>"+ 
+		"<td>"+value['description']+"</td>"+ 
+		"<td>"+value['amount']+"</td>";
+		if(value['cashType']=="Debit"){
+			text = text+"<td></td><td></td><td></td>";
+		}
+		else
+		{
+			text =  "<td></td><td></td><td></td>" +text;
+		}
+		return "<tr>"+text+"</tr>";
+	};
+
+	$(document).ready(function(){
+		var home_url = '{{ home_url }}';
+		var postType = '{{ postType }}';
+		var cashType = 'DEBIT';
+
+		$("#btnSubmit").click(function(){
+			var accPost = '';
+
+			if(postType=='KASIR'){
+				accPost = 'KASIR';
+			}
+			else if(postType == 'PENJUALAN'){
+				accPost = 'PENJUALAN';
+			}
+			else if(postType == 'BELANJA'){
+				accPost = 'BELANJA';
+			};
+			// alert('test');
+			try{
+				if(!parseInt($('input[name=amount]').val())) throw "Harus memasukkan angka!"
+			}
+			catch(err)
+			{
+				alert(err);
+				return;
+			};
+
+
+			var formData = {
+				data:
+				{
+					accountingType : cashType,
+					time : new Date().getTime(),
+					notes : $('input[name=description]').val(),
+					amount : parseInt($('input[name=amount]').val()),
+					accountingPost : accPost
+				},
+				postType : postType
+			};
+
+			$.ajax({
+				  type: "POST",
+				  url: home_url+'/joernalia/add',
+				  data: JSON.stringify(formData),
+				  dataType :'json',
+				  contentType: 'application/json;charset=UTF-8',
+				  success: function(item){
+						window.location.href=home_url+'/joernalia/page/'+item['postType'];
+				  }
+				});
+		});
+
+		$(".selectCashType").click(function(){
+			cashType = $(this).text();
+			$('#cashType').find('span:first').text(cashType);
+		});
+		$(".selectPostType").click(function(){
+			postType = $(this).text();
+			$('#postType').find('span:first').text(postType);
+			window.location.href=home_url+'/joernalia/page/'+postType;
+		});
+
+		$("#btnBigBook").click(function(){
+			window.location.href=home_url+'/joernalia/bukubesar';
+		});
+
+
+	});
+
+
+	</script>
+
+	<style type="text/css">
+	table, th,td{
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	th,td{
+		padding: 5px;
+		text-align: left;
+	}
+	thead td{
+		text-align: center;
+	}
+	.spacer{
+		margin: 10px;
+	}
+	</style>
+	<body>
+		<div class="container">
+			<div class="container-fluid spacer">
+				<form class="form-inline">
+					<div class="form-group">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="postType">
+								<span> 
+									{{ postType }}
+								</span>
+								<span class="caret">
+								</span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:void(0)" class="selectPostType">KASIR</a></li>
+								<li><a href="javascript:void(0)" class="selectPostType">PENJUALAN</a></li>
+								<li><a href="javascript:void(0)" class="selectPostType">BELANJA</a></li>
+							</ul>
+						</div>
+						<div class="btn-group">
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="cashType">
+								<span> 
+									DEBIT
+								</span>
+								<span class="caret">
+								</span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a href="javascript:void(0)" class="selectCashType">DEBIT</a></li>
+								<li><a href="javascript:void(0)" class="selectCashType">KREDIT</a></li>
+							</ul>
+						</div>
+
+						<input type="text" class="form-control" placeholder="Description" name="description">
+						<div class="input-group">
+
+							<div class="input-group-addon">Rp.</div>
+							<input type="text" class="form-control" name="amount" placeholder="Amount">
+						</div>
+					</div>
+					<button id="btnSubmit" type="button" class="btn btn-primary">TAMBAHKAN</button>
+				</form>
+			</div>
+			<div class="panel panel-primary spacer">
+				<!-- kasih variable di sini -->
+				<div class="panel-heading">
+					POS {{postType}}
+				</div>
+				<table class="table table-striped" id="mainTable">
+					<thead>
+						<tr>
+							<td>Tanggal</td>
+							<td>ID Transaksi</td>
+							<td>Kredit</td>
+							<td>Debit</td>
+							<td>Catatan</td>
+						</tr>
+					</thead>
+					<tbody>
+						{% for entry in entries %}
+						<tr>
+							<td>{{ '{0}-{1}-{2}'.format(entry.date.day,entry.date.month, entry.date.year) }}</td>
+							<td>{{ entry.accountingId }}</td>
+							<td>{% if(entry.accountingType=='KREDIT') %} {{ entry.amount }} {% endif %}</td>
+							<td>{% if(entry.accountingType=='DEBIT') %} {{ entry.amount }} {% endif %}</td>
+							<td>{{ entry.notes }} </td>
+							
+						</tr>
+						{% endfor %}
+						<tr>
+
+							<td><b>TOTAL</b></td>
+							<td></td>
+							<td><b>{{ creditSum }}</b></td>
+							<td><b>{{ debitSum }}</b></td>
+							<td></td>
+
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<button id="btnBigBook" type="button" class="btn btn-primary spacer">LIHAT BUKU BESAR</button>
+		</div>
+{% endblock %}

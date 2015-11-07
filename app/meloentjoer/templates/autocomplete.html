@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% block body %}
+<script>
+  $(function() {
+
+
+  	var fetchData = function(word){
+		alert(word);
+
+		 $.get(host_url+word, function(data, status){
+		 	var arr = JSON.parse(data);
+        	alert("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+    		});
+  	};
+
+
+    $( "#asal" ).autocomplete({
+	    source: function( request, response ) {
+	    var word = $("#asal").val();
+        $.ajax({
+          url: host_url+'retrieve/'+word,
+          success: function( data ) {
+            alert(data)
+            response( JSON.parse(data) );
+          }
+        });
+      }
+
+    });
+
+    $( "#tujuan" ).autocomplete({
+	    source: function( request, response ) {
+	    var word = $("#tujuan").val();
+        $.ajax({
+          url: host_url+"retrieve/"+word,
+          success: function( data ) {
+            response( JSON.parse(data));
+          }
+        });
+      }
+
+    });
+
+    $("#kirim").click(function(){
+    	var formData = {
+    		source:$("#asal").val(),
+    		destination:$("#tujuan").val()
+    	}
+    	$.ajax({
+				  type: "POST",
+				  url: host_url+"search",
+				  data: JSON.stringify(formData),
+				  dataType :'json',
+				  contentType: 'application/json;charset=UTF-8',
+				  success: function(item){
+				  	$('#result').html(item['data']);
+				  }
+				});
+    });
+
+  });
+  </script>
+
+<style type="text/css">
+
+  .spacer{
+    margin: 10px;
+  }
+  </style>
+  <div class="container">
+    <div class="container-fluid spacer well">
+        <div class="form-group">
+          <div class="ui-widget">
+            <label for="asal">Asal: </label>
+            <input id="asal">
+            <label for="tujuan">Tujuan: </label>
+            <input id="tujuan">
+            <input id="kirim" type="submit" value="Cari Rute!">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="result" class="container-fluid spacer" >
+      
+    </div>
+  </div>
+
+{% endblock %}

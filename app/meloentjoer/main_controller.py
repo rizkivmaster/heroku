@@ -8,13 +8,13 @@ meloentjoer = Blueprint('meloentjoer', __name__)
 
 
 @meloentjoer.route('/retrieve/<string:word>')
-def retrieve_route(self, word):
+def retrieve_route(word):
     word_list = main_component.autocomplete_service.get_words(word)
     return json.dumps(word_list)
 
 
 @meloentjoer.route('/search', methods=['POST'])
-def search_route(self):
+def search_route():
     json_return = request.get_json()
     source = json_return['source']
     destination = json_return['destination']

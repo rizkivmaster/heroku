@@ -4,13 +4,12 @@ from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
 from app.meloentjoer.common.logging import logger as __logger
 from app.meloentjoer.config import general_config
 
-__logger.info('Starting bus estimation accessor')
-
 __bus_estimate_session = PostgresAccessorBase(BusEstimation, general_config.get_database_url())
 __estimator_cache = dict()
 
 
 def __refresh():
+    __logger.info('Updating Bus Estimation cache')
     all_prediction = __get_all_bus_estimates()
     for prediction in all_prediction:
         assert isinstance(prediction, BusEstimation)

@@ -6,7 +6,7 @@ from app.meloentjoer.common.logging import logger as __logger
 
 
 def __update():
-    __logger.info('Refreshing busway routes data')
+    __logger.info('Updating Busway Routes data')
     route_list = __helper.get_busway_routes()
     for route in route_list:
         __bus_route_accessor.upset_bus_route(route)

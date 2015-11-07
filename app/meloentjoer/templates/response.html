@@ -1,0 +1,45 @@
+
+{% for entry in entries %}
+<ul class="list-group">
+  {% if next_bus!=None %}
+    <li class="list-group-item active">
+    <span class="badge">{{ next_bus.eta }} menit</span><h4 class="list-group-item-heading">Bus berikutnya berada di {{ next_bus.current_stop }}
+  </h4>
+</li>
+</ul>
+    {% endif %}
+  <ul class="list-group">  
+
+  <li class="list-group-item active">
+    <span class="badge">{{ entry.time }} menit</span><span class="badge">Rp. {{entry.price }}</span><h4 class="list-group-item-heading">Dari {{ entry.source }} ke {{ entry.destination }}
+    {% if entry.branch!=None %}
+    (via {{ entry.branch }})
+    {% endif %}
+  </h4>
+  <p class="list-group-item-text">{{ entry.mode_list_count }} pemberhentian</p></li>
+
+  {% for mode in entry.mode_list %}
+
+  {% if mode.name=='Transfer' %}
+
+  <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span>
+    Transfer ke <i>{{ mode.destination }}</i></li>
+
+    {% elif mode.name=='Jalan Kaki' %}
+    <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span><span class=" glyphicon glyphicon-transfer"></span> Dari {{ mode.origin }},
+     jalan kaki ke {{ mode.destination }}</li>
+
+     {% elif 'TransJakarta' in mode.name %}
+     <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+      <span class="glyphicon glyphicon-bed"></span> {{mode.origin}} <span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.name}}</i></li>
+
+      {% elif 'KRL' in mode.name %}
+
+      <li class="list-group-item"><span class="badge">{{ mode.eta }} menit</span><span class="badge">Rp. {{mode.price }}</span>
+        <span class="glyphicon glyphicon-scale"> </span> {{mode.origin}}<span class="glyphicon glyphicon-menu-right"></span> {{mode.destination}} <i>via {{mode.name}}</i></li>
+        {% endif %}
+
+        {% endfor %}
+
+      </ul>
+      {% endfor %}

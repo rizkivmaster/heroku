@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css"
+	href="{{ url_for('static',filename='css/bootstrap.css') }}/">
+	<script src="{{ url_for('static',filename='js/jquery-1.11.3.js') }}"></script>
+	<script src="{{ url_for('static',filename='js/bootstrap.js') }}"></script>
+
+	<script type="text/javascript">
+
+
+
+        $(document).ready(function(){
+            function success(text){
+	            $('#captor').html(text);
+	        }
+
+            var index=0;
+            setInterval( function(){
+                                        $.ajax({
+                                            url: "http://localhost:5000/jarvis/update"
+                                            })
+                                             .done(function( data ) {
+                                                $('#captor').text(JSON.stringify(data))
+                                                });
+                                }
+                ,5000);
+
+        });
+	</script>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div id="captor">
+
+</div>
+</body>
+</html>
