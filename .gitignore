@@ -3,3 +3,4 @@ venv/*
 *ipynb*
 .idea/*
 alternative.env
+**/*.log

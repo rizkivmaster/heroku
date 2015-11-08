@@ -121,6 +121,7 @@ def reset():
 
 
 def start():
+    __refresh()
     __scheduler.start()
 
 

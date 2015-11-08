@@ -30,7 +30,7 @@ def __generate_busway_mode():
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'
             bus_mode.corridor = corridor_name
-            bus_mode.eta = eta/60.0
+            bus_mode.eta = max(eta / 60, 1)
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination
@@ -42,7 +42,7 @@ def __generate_busway_mode():
             bus_mode = BuswayMode()
             bus_mode.name = 'Transjakarta'
             bus_mode.corridor = corridor_name
-            bus_mode.eta = eta/60.0
+            bus_mode.eta = max(eta / 60, 1)
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination

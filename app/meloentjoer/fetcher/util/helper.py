@@ -3,7 +3,7 @@ from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
 
 __author__ = 'traveloka'
 
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
 import urllib2
 import xml.etree.ElementTree as Et
 
@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from app.meloentjoer.common.util.LinkedHash import LinkedHash
 import re
 
+__logger = logger_factory.create_logger('helper')
 
 def scrap(link):
     """
@@ -69,9 +70,10 @@ def multi_href_parser(element):
     return return_lists, return_maps
 
 
-def get_busway_routes():
+def get_busway_routes(callback=None):
     """
     scrape the routes
+    :type callback:app.meloentjoer.common.callbacks.Callback
 
 
     :rtype list[BusRoute]
@@ -94,7 +96,8 @@ def get_busway_routes():
             route.corridor_name = corridor_name
             routes_list.append(route)
     except Exception, e:
-        __logger.error(e.message)
+        callback.on_failure(e)
+        __logger.error('Busway scraping is not running')
     return routes_list
 
 

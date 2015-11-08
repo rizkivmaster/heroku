@@ -54,4 +54,5 @@ def stop():
 
 
 def start():
+    __update()
     __scheduler.start()
