@@ -1,8 +1,10 @@
-from app.meloentjoer.accessors import bus_route_accessor as __bus_route_accessor
+from app.meloentjoer.accessors.routes import bus_route_accessor as __bus_route_accessor
 from app.meloentjoer.common import general_scheduler as __general_scheduler
 from app.meloentjoer.config import general_config as __general_config
 from app.meloentjoer.fetcher.util import helper as __helper
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
+
+__logger = logger_factory.create_logger(__name__)
 
 
 def __update():
@@ -23,4 +25,5 @@ def start():
 
 
 def stop():
+    __logger.info('Stopped')
     __scheduler.stop()

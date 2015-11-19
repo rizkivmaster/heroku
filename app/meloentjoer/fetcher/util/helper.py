@@ -1,5 +1,9 @@
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
+from app.meloentjoer.accessors.entity.TrainRoute import TrainRoute
+from app.meloentjoer.accessors.entity.WalkRoute import WalkRoute
 from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
+import traceback
+import sys
 
 __author__ = 'traveloka'
 
@@ -12,6 +16,7 @@ from app.meloentjoer.common.util.LinkedHash import LinkedHash
 import re
 
 __logger = logger_factory.create_logger('helper')
+
 
 def scrap(link):
     """
@@ -102,18 +107,63 @@ def get_busway_routes(callback=None):
 
 
 def get_train_routes():
+    """
+    :rtype :list[TrainRoute]
+    :return:
+    """
+    scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
+    main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
+    tables = main_content.find_all('table', {'class': 'wikitable'})
+    train_routes_list = []
     train_scrapper = scrap(
         'https://en.wikipedia.org/w/index.php?title=KA_Commuter_Jabodetabek&oldid=683328854')
     raw_tables = train_scrapper.select('dl > dd > b')
-    routes_table = dict()
     for table in raw_tables:
         line_name = \
             re.findall('[a-zA-Z0-9 ]+[a-zA-Z0-9]', table.parent.parent.previousSibling.previousSibling.string)[
                 0].strip()
         station_list = LinkedHash(
             map(lambda x: x.strip(), re.sub(u'\u2192', ',', re.sub('\\.', '', table.parent.getText())).split(',')))
-        routes_table[line_name] = station_list
-    return routes_table
+        train_route = TrainRoute()
+        train_route.line_name = line_name
+        train_route.stations = station_list
+        train_routes_list.append(train_route)
+    return train_routes_list
+
+
+def get_walk_routes():
+    """
+    :rtype :list[WalkRoute]
+    :return:
+    """
+    walk_routes_list = []
+    try:
+        scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
+        main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
+        tables = main_content.find_all('table', {'class': 'wikitable'})
+        for table in tables:
+            rows = table.find_all('tr')
+            corridor_name = rows[0].find('th').find('a')['title']
+            newrows = rows[2:]
+            for row in newrows:
+                busway_station = row_parser(row.find_all('td')[1].getText())
+                nearby_segments = row.find_all('td')
+                if len(nearby_segments) > 3:
+                    nearby_segment = nearby_segments[3]
+                    nearby_set, nearby_map = multi_href_parser(nearby_segment)
+                    for key in nearby_set:
+                        cleaned_nearby = re.sub('Bus Terminal', '', nearby_map[key][1])
+                        cleaned_nearby = re.sub('Station', '', cleaned_nearby)
+                        cleaned_nearby = cleaned_nearby.strip()
+                        walk_route = WalkRoute()
+                        walk_route.walk_from = busway_station
+                        walk_route.walk_to = cleaned_nearby
+                        walk_routes_list.append(walk_route)
+    except Exception, e:
+        __logger.error(e.message)
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
+    return walk_routes_list
 
 
 def get_session_key():
@@ -171,3 +221,6 @@ def request_buses():
         bus_track_data.speed = float(dixx['speedKmh'])
         dix[bus_track_data.name] = bus_track_data
     return dix
+
+
+get_walk_routes()

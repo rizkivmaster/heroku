@@ -7,7 +7,7 @@ from app.meloentjoer import main_component
 class ServiceTest(unittest.TestCase):
     def test_autocomplete(self):
         main_component.start()
-        routes_list = main_component.bus_route_accessor.get_all_bus_routes()
+        routes_list = app.meloentjoer.accessors.routes.bus_route_accessor.get_all_bus_routes()
         bus_route = routes_list[0]
         station = bus_route.stations[0]
         bag_of_words = main_component.autocomplete_service.get_words(station[0:3])

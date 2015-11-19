@@ -5,6 +5,8 @@ class TransportationMode(object):
         self.eta = None
         self.destination = None
         self.origin = None
+        self.heading_to = None
+        self.heading_from = None
 
     def cost(self):
         return self.eta

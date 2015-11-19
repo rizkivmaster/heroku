@@ -33,9 +33,13 @@ def get_mapping_threshold():
 
 def get_geo_refresh_period():
     """
-    :rtype int
+    :rtype :int
     :return:
     """
+    return 10
+
+
+def get_train_info_refresh_period():
     return 10
 
 

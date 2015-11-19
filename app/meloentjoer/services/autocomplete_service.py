@@ -1,9 +1,10 @@
-from app.meloentjoer.accessors import bus_route_accessor
+from app.meloentjoer.accessors.routes import bus_route_accessor
 from app.meloentjoer.common import general_scheduler
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
 from app.meloentjoer.common.util.TrieNode import TrieNode
 from app.meloentjoer.config import general_config
 
+__logger = logger_factory.create_logger('autocomplete_service')
 __logger.info('Starting Autocomplete Service')
 __trie = TrieNode()
 
@@ -49,10 +50,11 @@ def get_words(key):
     return list(word_list)
 
 
-def stop():
-    __scheduler.stop()
-
-
 def start():
     __update()
     __scheduler.start()
+
+
+def stop():
+    __logger.info('Stopped')
+    __scheduler.stop()
