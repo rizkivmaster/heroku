@@ -1,9 +1,8 @@
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
+from app.meloentjoer.accessors.entity.BuswayTransfer import BuswayTransfer
 from app.meloentjoer.accessors.entity.TrainRoute import TrainRoute
 from app.meloentjoer.accessors.entity.WalkRoute import WalkRoute
 from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
-import traceback
-import sys
 
 __author__ = 'traveloka'
 
@@ -96,7 +95,7 @@ def get_busway_routes(callback=None):
             station_list = []
             for row in new_rows:
                 station_name = row_parser(row.find_all('td')[1].getText())
-                station_list.append(station_name)
+                station_list.append("Halte " + station_name)
             route.stations = station_list
             route.corridor_name = corridor_name
             routes_list.append(route)
@@ -123,7 +122,8 @@ def get_train_routes():
             re.findall('[a-zA-Z0-9 ]+[a-zA-Z0-9]', table.parent.parent.previousSibling.previousSibling.string)[
                 0].strip()
         station_list = LinkedHash(
-            map(lambda x: x.strip(), re.sub(u'\u2192', ',', re.sub('\\.', '', table.parent.getText())).split(',')))
+            map(lambda x: 'Stasiun ' + x.strip(),
+                re.sub(u'\u2192', ',', re.sub('\\.', '', table.parent.getText())).split(',')))
         train_route = TrainRoute()
         train_route.line_name = line_name
         train_route.stations = station_list
@@ -156,14 +156,51 @@ def get_walk_routes():
                         cleaned_nearby = re.sub('Station', '', cleaned_nearby)
                         cleaned_nearby = cleaned_nearby.strip()
                         walk_route = WalkRoute()
-                        walk_route.walk_from = busway_station
-                        walk_route.walk_to = cleaned_nearby
+                        walk_route.walk_from = 'Halte ' + busway_station
+                        if nearby_map[key][0] == 'Bus Terminal':
+                            walk_route.walk_to = 'Terminal ' + cleaned_nearby
+                        if nearby_map[key][0] == 'Train Station':
+                            walk_route.walk_to = 'Stasiun ' + cleaned_nearby
                         walk_routes_list.append(walk_route)
     except Exception, e:
         __logger.error(e.message)
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
-    return walk_routes_list
+    finally:
+        return walk_routes_list
+
+
+def get_busway_transfers():
+    """
+    :rtype :list[BuswayTransfer]
+    :return:
+    """
+    busway_transfers_list = []
+    try:
+        scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
+        main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
+        tables = main_content.find_all('table', {'class': 'wikitable'})
+        for table in tables:
+            rows = table.find_all('tr')
+            from_busway_corridor = rows[0].find('th').find('a')['title']
+            transfer_rows = rows[2:]
+            for row in transfer_rows:
+                from_busway_station = 'Halte ' + row_parser(row.find_all('td')[1].getText())
+                transfer_set, transfer_map = multi_href_parser(row.find_all('td')[2])
+                for transfer_key in transfer_set:
+                    if from_busway_station in transfer_map[transfer_key][1]:
+                        to_busway_station = 'Halte ' + transfer_map[transfer_key][1]
+                        to_busway_corridor = transfer_map[transfer_key][0]
+                        # no need to state a transfer between stations with similar name
+                        if not from_busway_station == to_busway_station:
+                            busway_transfer = BuswayTransfer()
+                            busway_transfer.from_corridor = from_busway_corridor
+                            busway_transfer.from_station = from_busway_station
+                            busway_transfer.to_corridor = to_busway_corridor
+                            busway_transfer.to_station = to_busway_station
+                            busway_transfers_list.append(busway_transfer)
+    except Exception, e:
+        __logger.error(e.message)
+    finally:
+        return busway_transfers_list
 
 
 def get_session_key():

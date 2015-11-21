@@ -1,3 +1,4 @@
+# TODO separate TransportationMode from GeneralMode such that WalkMode does not belong to TransportationMode
 class TransportationMode(object):
     def __init__(self):
         self.name = None

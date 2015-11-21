@@ -25,6 +25,10 @@ class WalkRouteModel(ModelBase):
         walk_route.walk_to = self.walk_to
         return walk_route
 
+    def from_walk_route(self, walk_route):
+        self.walk_to = walk_route.walk_to
+        self.walk_from = walk_route.walk_from
+
 
 walk_routes_session = PostgresAccessorBase(WalkRouteModel,
                                            __config.get_database_url())
@@ -70,8 +74,6 @@ def upset_walk_route(walk_route):
         __logger.error(e)
     if raw_walk_route is None:
         raw_walk_route = WalkRouteModel()
-        raw_walk_route.walk_to = walk_route.walk_to
-        raw_walk_route.walk_from = walk_route.walk_from
+        raw_walk_route.from_walk_route(walk_route)
         walk_routes_session.add(raw_walk_route)
         walk_routes_session.commit()
-

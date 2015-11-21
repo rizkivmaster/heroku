@@ -38,8 +38,14 @@ def get_geo_refresh_period():
     """
     return 10
 
+def get_busway_transfer_refresh_period():
+    return 10
 
 def get_train_info_refresh_period():
+    return 10
+
+
+def get_walk_route_refresh_period():
     return 10
 
 

@@ -1,20 +1,20 @@
+from app.meloentjoer.accessors.routes import busway_transfer_accessor
 from app.meloentjoer.common import general_scheduler
 from app.meloentjoer.common.logging import logger_factory
 from app.meloentjoer.config import general_config
-from app.meloentjoer.fetcher.util import helper as __helper
-from app.meloentjoer.accessors.routes import train_route_accessor as __train_route_accessor
+from app.meloentjoer.fetcher.util import helper
 
 __logger = logger_factory.create_logger(__name__)
 
 
 def __update():
-    __logger.info('Updating train routes data')
-    route_list = __helper.get_train_routes()
-    for train_route in route_list:
-        __train_route_accessor.upset_train_route(train_route)
+    __logger.info('Updating busway transfer data')
+    route_list = helper.get_busway_transfers()
+    for busway_transfer in route_list:
+        busway_transfer_accessor.upset_busway_transfer(busway_transfer)
 
 
-__update_period = general_config.get_train_info_refresh_period()
+__update_period = general_config.get_busway_transfer_refresh_period()
 __scheduler = general_scheduler.schedule(__update_period, __update)
 
 

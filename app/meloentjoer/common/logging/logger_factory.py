@@ -1,4 +1,6 @@
 import logging
+import traceback
+import sys
 
 
 class Logger(object):
@@ -15,6 +17,8 @@ class Logger(object):
 
     def error(self, message):
         self.__logger.error(message)
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback.print_tb(exc_traceback, limit=1, file=sys.stdout)
 
     def info(self, message):
         self.__logger.info(message)
