@@ -3,7 +3,9 @@ from app.meloentjoer.common.databases.ModelBase import ModelBase
 from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
 from app.meloentjoer.config import general_config as __config
 from sqlalchemy import String, Column
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
+
+__logger = logger_factory.create_logger(__name__)
 
 
 class BusRouteModel(ModelBase):
@@ -12,8 +14,8 @@ class BusRouteModel(ModelBase):
     stations = Column(String)
 
     def __init__(self):
-        bus_routes_session.corridor_name = None
-        bus_routes_session.stations = None
+        self.corridor_name = None
+        self.stations = None
 
     def to_bus_route(self):
         bus_route = BusRoute()

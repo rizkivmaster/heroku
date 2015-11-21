@@ -1,11 +1,12 @@
 from app.meloentjoer.accessors.entity.BusEstimation import BusEstimation
 from app.meloentjoer.common import general_scheduler
 from app.meloentjoer.common.databases.PostgreBase import PostgresAccessorBase
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
 from app.meloentjoer.config import general_config
 
 __bus_estimate_session = PostgresAccessorBase(BusEstimation, general_config.get_database_url())
 __estimator_cache = dict()
+__logger = logger_factory.create_logger(__name__)
 
 
 def __refresh():
@@ -126,4 +127,5 @@ def start():
 
 
 def stop():
+    __logger.info('Stopped')
     __scheduler.stop()

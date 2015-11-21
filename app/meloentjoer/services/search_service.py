@@ -1,12 +1,14 @@
-from app.meloentjoer.accessors import bus_route_accessor, bus_estimation_accessor, next_bus_accessor
+from app.meloentjoer.accessors import bus_estimation_accessor, next_bus_accessor
+from app.meloentjoer.accessors.routes import bus_route_accessor
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 from app.meloentjoer.accessors.entity.NextBus import NextBus
-from app.meloentjoer.common.logging import logger as __logger
+from app.meloentjoer.common.logging import logger_factory
 from app.meloentjoer.common.util.ConnectedGraph import ConnectedGraph
 from app.meloentjoer.config import general_config
 from app.meloentjoer.services.entity.BuswayMode import BuswayMode
 from app.meloentjoer.services.entity.SearchResult import SearchResult
 
+__logger = logger_factory.create_logger('search_service')
 __logger.info('Starting Search Service')
 
 
@@ -34,6 +36,8 @@ def __generate_busway_mode():
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination
+            bus_mode.heading_from = station_list[0]
+            bus_mode.heading_to = station_list[-1]
             mode_list.append(bus_mode)
 
         for destination, origin in zip(origin_list, destination_list):
@@ -46,6 +50,8 @@ def __generate_busway_mode():
             bus_mode.price = general_config.get_default_price()
             bus_mode.origin = origin
             bus_mode.destination = destination
+            bus_mode.heading_from = station_list[-1]
+            bus_mode.heading_to = station_list[0]
             mode_list.append(bus_mode)
     return mode_list
 

@@ -1,16 +1,19 @@
 import logging
 import datetime
 
-from app.meloentjoer.accessors import geo_data_accessor, bus_route_accessor, bus_state_accessor, bus_estimation_accessor, \
+from app.meloentjoer.accessors import geo_data_accessor, bus_state_accessor, bus_estimation_accessor, \
     next_bus_accessor
+from app.meloentjoer.accessors.routes import bus_route_accessor
 from app.meloentjoer.accessors.entity.NextBus import NextBus
 from app.meloentjoer.common import general_scheduler
-from app.meloentjoer.common.logging import logger as __logger
-from app.meloentjoer.config import general_config as __general_config, general_config
+from app.meloentjoer.common.logging import logger_factory
+from app.meloentjoer.config import general_config as __general_config
 from app.meloentjoer.fetcher.entity.BusTrackData import BusTrackData
 from app.meloentjoer.accessors.entity.BusState import BusState
 from app.meloentjoer.fetcher.util import helper as __helper
 import numpy as np
+
+__logger = logger_factory.create_logger('busway_track_fetcher')
 
 
 def __is_in(stop_list, station_list):
@@ -127,9 +130,10 @@ def __refresh():
         station_location,
         bus_routes)
 
+
 # logic part
 
-__scheduler = general_scheduler.schedule(general_config.get_eta_refresh_period(), __refresh)
+__scheduler = general_scheduler.schedule(__general_config.get_eta_refresh_period(), __refresh)
 
 
 def start():
@@ -139,4 +143,5 @@ def start():
 
 
 def stop():
+    __logger.info('Stopped')
     __scheduler.stop()
