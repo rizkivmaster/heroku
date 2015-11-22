@@ -20,8 +20,15 @@ class TrainRouteModel(ModelBase):
     def to_train_route(self):
         train_route = TrainRoute()
         train_route.line_name = self.line_name
-        train_route.stations = self.stations.split(',')
+        train_route.stations = self.stations.split(';')
         return train_route
+
+    def from_train_route(self, train_route):
+        """
+        :type train_route : TrainRoute
+        """
+        self.line_name = train_route.line_name
+        self.stations = ';'.join(train_route.stations)
 
 
 train_routes_session = PostgresAccessorBase(TrainRouteModel,
@@ -60,14 +67,8 @@ def upset_train_route(train_route):
     :return:
     """
     raw_train_route = get_train_route_by_line(train_route.line_name)
-    try:
-        assert (isinstance(raw_train_route, TrainRouteModel) if raw_train_route is not None else True)
-    except AssertionError, e:
-        __logger.error(e)
     if raw_train_route is None:
         raw_train_route = TrainRouteModel()
-        raw_train_route.line_name = train_route.line_name
-        raw_train_route.stations = ','.join(train_route.stations)
+        raw_train_route.from_train_route(train_route)
         train_routes_session.add(raw_train_route)
-    raw_train_route.stations = ','.join(train_route.stations)
     train_routes_session.commit()

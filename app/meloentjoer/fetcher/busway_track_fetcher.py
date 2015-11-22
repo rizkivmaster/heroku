@@ -118,7 +118,6 @@ def __update_bus_states_and_bus_queues(buses_data,
 
 
 def __refresh():
-    __logger.info('Updating Bus Tracking data')
     bus_data = __helper.request_buses()
     mapping_threshold = __general_config.get_mapping_threshold()
     station_location = geo_data_accessor.get_station_location()
@@ -129,6 +128,7 @@ def __refresh():
         mapping_threshold,
         station_location,
         bus_routes)
+    __logger.info('Updated')
 
 
 # logic part
@@ -140,6 +140,7 @@ def start():
     # hack: force to update immediately
     __refresh()
     __scheduler.start()
+    __logger.info('Started')
 
 
 def stop():

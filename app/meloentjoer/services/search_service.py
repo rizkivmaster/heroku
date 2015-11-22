@@ -11,7 +11,6 @@ from app.meloentjoer.services.entity.TransportationMode import TransportationMod
 from copy import deepcopy
 
 __logger = logger_factory.create_logger('search_service')
-__logger.info('Starting Search Service')
 
 
 def __generate_busway_mode():
@@ -31,7 +30,7 @@ def __generate_busway_mode():
             eta = bus_estimation_accessor.predict_eta(origin, destination)
             eta = eta if eta else general_config.get_default_eta()
             bus_mode = BuswayMode()
-            bus_mode.name = 'Transjakarta ' + corridor_name
+            bus_mode.name = corridor_name
             bus_mode.corridor = corridor_name
             bus_mode.eta = max(eta / 60, 1)
             bus_mode.price = general_config.get_default_price()
@@ -45,7 +44,7 @@ def __generate_busway_mode():
             eta = bus_estimation_accessor.predict_eta(origin, destination)
             eta = eta if eta else general_config.get_default_eta()
             bus_mode = BuswayMode()
-            bus_mode.name = 'Transjakarta ' + corridor_name
+            bus_mode.name = corridor_name
             bus_mode.corridor = corridor_name
             bus_mode.eta = max(eta / 60, 1)
             bus_mode.price = general_config.get_default_price()
@@ -72,10 +71,10 @@ def __generate_train_mode():
         destination_list = station_list[1:]
         for origin, destination in zip(origin_list, destination_list):
             # TODO remove this eta hack!
-            eta = 180
+            eta = 3
             transportation_mode = TransportationMode()
             transportation_mode.eta = eta
-            transportation_mode.name = ' '.join(['KRL', origin, '-', destination])
+            transportation_mode.name = ' '.join(['KRL ', train_route.line_name])
             transportation_mode.origin = origin
             transportation_mode.destination = destination
             # TODO remove this price hack
@@ -86,10 +85,10 @@ def __generate_train_mode():
 
         for destination, origin in zip(origin_list, destination_list):
             # TODO remove this eta hack!
-            eta = 180
+            eta = 3
             transportation_mode = TransportationMode()
             transportation_mode.eta = eta
-            transportation_mode.name = ' '.join(['KRL', origin, '-', destination])
+            transportation_mode.name = ' '.join(['KRL ', train_route.line_name])
             transportation_mode.origin = origin
             transportation_mode.destination = destination
             # TODO remove this price hack
@@ -113,7 +112,7 @@ def __generate_walk_mode():
         destination = walk_route.walk_to
         transportation_mode = TransportationMode()
         # TODO remove this hack!
-        transportation_mode.eta = 60
+        transportation_mode.eta = 2
         transportation_mode.name = 'Jalan Santai'
         transportation_mode.origin = origin
         transportation_mode.destination = destination
@@ -127,7 +126,7 @@ def __generate_walk_mode():
         destination = walk_route.walk_from
         transportation_mode = TransportationMode()
         # TODO remove this hack!
-        transportation_mode.eta = 60
+        transportation_mode.eta = 2
         transportation_mode.name = 'Jalan Santai'
         transportation_mode.origin = origin
         transportation_mode.destination = destination
@@ -149,7 +148,7 @@ def __generate_busway_transfer_mode():
         origin = busway_transfer.from_station
         destination = busway_transfer.to_station
         transportation_mode = TransportationMode()
-        transportation_mode.eta = 60
+        transportation_mode.eta = 3
         transportation_mode.name = 'Jalan Santai'
         transportation_mode.origin = origin
         transportation_mode.destination = destination
@@ -162,7 +161,7 @@ def __generate_busway_transfer_mode():
         origin = busway_transfer.to_station
         destination = busway_transfer.from_station
         transportation_mode = TransportationMode()
-        transportation_mode.eta = 60
+        transportation_mode.eta = 3
         transportation_mode.name = 'Jalan Santai'
         transportation_mode.origin = origin
         transportation_mode.destination = destination
@@ -224,6 +223,7 @@ def __merge_mode(mode1, mode2):
     """
     copied_mode = deepcopy(mode2)
     copied_mode.origin = mode1.origin
+    copied_mode.eta = mode1.eta + mode2.eta
     return copied_mode
 
 

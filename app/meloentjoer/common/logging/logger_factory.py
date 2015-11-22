@@ -13,7 +13,14 @@ class Logger(object):
         logging.basicConfig(filename='mj.log',
                             level=logging.DEBUG,
                             format='%(asctime)s - %(levelname)s - {0} - %(message)s'.format(name))
-        self.__logger = logging.getLogger()
+        self.__logger = logging.getLogger(name)
+        # create console handler and set level to debug
+
+        ch = logging.StreamHandler()
+        ch.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - {0} - %(message)s'.format(name))
+        ch.setFormatter(formatter)
+        self.__logger.addHandler(ch)
 
     def error(self, message):
         self.__logger.error(message)

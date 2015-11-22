@@ -6,13 +6,11 @@ from app.meloentjoer.common.util.TrieNode import TrieNode
 from app.meloentjoer.config import general_config
 
 __logger = logger_factory.create_logger('autocomplete_service')
-__logger.info('Starting Autocomplete Service')
 __trie = TrieNode()
 
 
 def __update():
     try:
-        __logger.info('Updating Autocomplete Service')
         bus_route_list = bus_route_accessor.get_all_bus_routes()
         word_pool = set()
         for route in bus_route_list:
@@ -39,6 +37,8 @@ def __update():
     except Exception, e:
         __logger.error('Autocomplete Service failed to refresh')
         __logger.error(e)
+    __logger.info('Updated')
+
 
 __scheduler = general_scheduler.schedule(general_config.get_autocomplete_refresh_period(), __update)
 
@@ -68,8 +68,9 @@ def get_words(key):
 def start():
     __update()
     __scheduler.start()
+    __logger.info('Started')
 
 
 def stop():
-    __logger.info('Stopped')
     __scheduler.stop()
+    __logger.info('Stopped')

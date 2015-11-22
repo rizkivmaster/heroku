@@ -10,7 +10,6 @@ __logger = logger_factory.create_logger(__name__)
 
 
 def __refresh():
-    __logger.info('Updating Bus Estimation cache')
     all_prediction = __get_all_bus_estimates()
     for prediction in all_prediction:
         assert isinstance(prediction, BusEstimation)
@@ -22,6 +21,7 @@ def __refresh():
             estimation_destination,
             estimation_eta
         )
+    __logger.info('Updated')
 
 
 __scheduler = general_scheduler.schedule(general_config.get_eta_refresh_period(), __refresh)
@@ -124,6 +124,7 @@ def reset():
 def start():
     __refresh()
     __scheduler.start()
+    __logger.info('Started')
 
 
 def stop():

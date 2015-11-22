@@ -8,10 +8,10 @@ __logger = logger_factory.create_logger(__name__)
 
 
 def __update():
-    __logger.info('Updating Busway Routes data')
     route_list = __helper.get_busway_routes()
     for route in route_list:
         __bus_route_accessor.upset_bus_route(route)
+    __logger.info('Updated')
 
 
 __update_period = __general_config.get_geo_refresh_period()
@@ -22,6 +22,7 @@ def start():
     # hack: force to update immediately
     __update()
     __scheduler.start()
+    __logger.info('Started')
 
 
 def stop():

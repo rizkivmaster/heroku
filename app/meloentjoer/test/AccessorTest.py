@@ -1,9 +1,11 @@
 import unittest
 
 from app.meloentjoer.accessors import bus_estimation_accessor
+from app.meloentjoer.accessors.entity.BuswayTransfer import BuswayTransfer
 from app.meloentjoer.accessors.entity.TrainRoute import TrainRoute
 from app.meloentjoer.accessors.entity.WalkRoute import WalkRoute
-from app.meloentjoer.accessors.routes import bus_route_accessor, walk_route_accessor, train_route_accessor
+from app.meloentjoer.accessors.routes import bus_route_accessor, walk_route_accessor, train_route_accessor, \
+    busway_transfer_accessor
 from app.meloentjoer.accessors.entity.BusRoute import BusRoute
 
 
@@ -39,10 +41,20 @@ class AccessorTest(unittest.TestCase):
         walk_route.walk_from = 'Test 2'
         walk_route_accessor.upset_walk_route(walk_route)
 
-        post_walk_route = walk_route_accessor.get_walk_route('Test 2', 'Test 1')
+        post_walk_route = walk_route_accessor.get_walk_route(walk_route)
 
         self.assertEqual(post_walk_route.walk_to, walk_route.walk_to)
         self.assertEqual(post_walk_route.walk_from, walk_route.walk_from)
+
+    def test_transfer_route_accessor(self):
+        busway_transfer = BuswayTransfer()
+        busway_transfer.from_station = 'Halte ini'
+        busway_transfer.to_station = 'Halte itu'
+        busway_transfer_accessor.upset_busway_transfer(busway_transfer)
+        post_busway_transfer = busway_transfer_accessor.get_busway_transfer(busway_transfer)
+        """ :type post_busway_transfer: BuswayTransfer"""
+        self.assertEqual(busway_transfer.from_station, post_busway_transfer.from_station)
+        self.assertEqual(busway_transfer.to_station, post_busway_transfer.to_station)
 
     def test_bus_estimate_accessor(self):
         bus_estimation_accessor.reset()

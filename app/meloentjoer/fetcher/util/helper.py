@@ -110,9 +110,6 @@ def get_train_routes():
     :rtype :list[TrainRoute]
     :return:
     """
-    scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
-    main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
-    tables = main_content.find_all('table', {'class': 'wikitable'})
     train_routes_list = []
     train_scrapper = scrap(
         'https://en.wikipedia.org/w/index.php?title=KA_Commuter_Jabodetabek&oldid=683328854')
@@ -159,9 +156,11 @@ def get_walk_routes():
                         walk_route.walk_from = 'Halte ' + busway_station
                         if nearby_map[key][0] == 'Bus Terminal':
                             walk_route.walk_to = 'Terminal ' + cleaned_nearby
+                            walk_routes_list.append(walk_route)
                         if nearby_map[key][0] == 'Train Station':
                             walk_route.walk_to = 'Stasiun ' + cleaned_nearby
-                        walk_routes_list.append(walk_route)
+                            walk_routes_list.append(walk_route)
+
     except Exception, e:
         __logger.error(e.message)
     finally:
@@ -178,25 +177,27 @@ def get_busway_transfers():
         scrapper = scrap("https://en.wikipedia.org/wiki/TransJakarta_Corridors")
         main_content = scrapper.find('div', attrs={'id': 'mw-content-text'})
         tables = main_content.find_all('table', {'class': 'wikitable'})
+        filter_set = set()
         for table in tables:
             rows = table.find_all('tr')
-            from_busway_corridor = rows[0].find('th').find('a')['title']
             transfer_rows = rows[2:]
             for row in transfer_rows:
-                from_busway_station = 'Halte ' + row_parser(row.find_all('td')[1].getText())
+                from_busway_station = row_parser(row.find_all('td')[1].getText())
                 transfer_set, transfer_map = multi_href_parser(row.find_all('td')[2])
                 for transfer_key in transfer_set:
-                    if from_busway_station in transfer_map[transfer_key][1]:
-                        to_busway_station = 'Halte ' + transfer_map[transfer_key][1]
-                        to_busway_corridor = transfer_map[transfer_key][0]
-                        # no need to state a transfer between stations with similar name
-                        if not from_busway_station == to_busway_station:
-                            busway_transfer = BuswayTransfer()
-                            busway_transfer.from_corridor = from_busway_corridor
-                            busway_transfer.from_station = from_busway_station
-                            busway_transfer.to_corridor = to_busway_corridor
-                            busway_transfer.to_station = to_busway_station
-                            busway_transfers_list.append(busway_transfer)
+                    to_busway_station = transfer_map[transfer_key][1]
+                    # no need to state a transfer between stations with similar name
+                    if not from_busway_station == to_busway_station:
+                        halt_list = list()
+                        halt_list.append(from_busway_station)
+                        halt_list.append(to_busway_station)
+                        halt_list.sort()
+                        filter_set.add((halt_list[0], halt_list[1]))
+        for halt_pair in filter_set:
+            busway_transfer = BuswayTransfer()
+            busway_transfer.from_station = 'Halte ' + halt_pair[0]
+            busway_transfer.to_station = 'Halte ' + halt_pair[1]
+            busway_transfers_list.append(busway_transfer)
     except Exception, e:
         __logger.error(e.message)
     finally:
@@ -258,6 +259,3 @@ def request_buses():
         bus_track_data.speed = float(dixx['speedKmh'])
         dix[bus_track_data.name] = bus_track_data
     return dix
-
-
-get_walk_routes()
